@@ -18,8 +18,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import ds.hdfs.hdfsformat.*;
 import ds.hdfs.IDataNode.*;
+import ds.hdfs.Proto_Defn.BlockReport;;
 
 public class DataNode implements IDataNode
 {
@@ -30,11 +30,15 @@ public class DataNode implements IDataNode
     protected String MyName;
     protected int MyID;
 
+    private ArrayList<String> MyChunks;
+    
     public DataNode()
     {
-        //Constructor
+    	//load chunks into MyChunks arr
     }
 
+    
+    //IGNORE FOR THIS PART OF PROJECT
     public static void appendtoFile(String Filename, String Line)
     {
         BufferedWriter bw = null;
@@ -56,7 +60,7 @@ public class DataNode implements IDataNode
 
     }
 
-    public byte[] readBlock(byte[] Inp)
+    public byte[] readBlock(byte[] input)
     {
         try
         {
@@ -70,7 +74,7 @@ public class DataNode implements IDataNode
         return response.build().toByteArray();
     }
 
-    public byte[] writeBlock(byte[] Inp)
+    public byte[] writeBlock(byte[] input)
     {
         try
         {
@@ -86,6 +90,17 @@ public class DataNode implements IDataNode
 
     public void BlockReport() throws IOException
     {
+    	BlockReport.Builder b = BlockReport.newBuilder();
+    	b.setId(MyID);
+    	b.setName(MyName);
+    	b.setIp(MyIP);
+    	b.setPort(MyPort);
+    	for(String s: MyChunks) {
+    		b.addChunkName(s);
+    	}
+    	BlockReport r = b.build();
+    	//send r to nameNode
+    	
     }
 
     public void BindServer(String Name, String IP, int Port)

@@ -1,5 +1,26 @@
+syntax = "proto2";
+
 package hdfs;
 
 option java_package = "ds.hdfs";
-option java_outer_classname = "SOMETHING";
+option java_outer_classname = "Proto_Defn";
 
+//dataNode -> nameNode
+message BlockReport{ 
+	required int32 id = 1; //not sure how to assign ids yet
+	required string name = 2;
+	required string ip = 3;
+	required int32 port = 4;
+	repeated string chunkName = 5; //i.e foo101
+}
+
+//client -> nameNode
+message ClientRequest{
+	enum ClientRequestType{
+		GET = 0;
+		PUT = 1;
+		LIST = 2;
+	}
+	required ClientRequestType requestType = 1;
+	optional string fileName = 2;
+}

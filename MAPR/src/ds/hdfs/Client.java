@@ -8,9 +8,11 @@ import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.io.*;
-import ds.hdfs.hdfsformat.*;
+
 import com.google.protobuf.ByteString; 
 //import ds.hdfs.INameNode;
+
+import ds.hdfs.Proto_Defn.ClientRequest;
 
 public class Client
 {
@@ -52,24 +54,70 @@ public class Client
         }
     }
 
-    public void PutFile(String Filename) //Put File
+    public void PutFile(String fileName) //Put File
     {
-        System.out.println("Going to put file" + Filename);
+        System.out.println("Going to put file" + fileName);
         BufferedInputStream bis;
         try{
-            bis = new BufferedInputStream(new FileInputStream(File));
+            bis = new BufferedInputStream(new FileInputStream(fileName));
         }catch(Exception e){
             System.out.println("File not found !!!");
             return;
         }
+        
+        ClientRequest.Builder c = ClientRequest.newBuilder();
+    	c.setRequestType(ClientRequest.ClientRequestType.PUT);
+    	c.setFileName(fileName);
+    	ClientRequest r = c.build();
+        //contact nameNode
+        //get list of file locations
+    	//for each location
+    		//send chunk
+    		//if failed, try other DNs
+    		//if all fail, report error
     }
 
-    public void GetFile(String FileName)
+    public void GetFile(String fileName)
     {
+    	ClientRequest.Builder c = ClientRequest.newBuilder();
+    	c.setRequestType(ClientRequest.ClientRequestType.GET);
+    	c.setFileName(fileName);
+    	ClientRequest r = c.build();
+    	//contact nameNode
+    	//open call
+    	//get list of file locations
+    	//for each location
+    		//get chunk
+    		//if failed, try replicated chunks
+    		//if all fail, report error
+    	
+    	//write file to local file system
+    	
+    	//TODO: fix up types with protobuf and bytestreams and whatnot
+    	try { 
+            OutputStream os = new FileOutputStream(fileName); 
+            for(ByteStream b: streams) {
+                os.write(b); 
+            }
+            os.close(); 
+        } 
+        catch (Exception e) { 
+            System.out.println("Exception: " + e); 
+        } 
+    	
     }
 
     public void List()
     {
+    	ClientRequest.Builder c = ClientRequest.newBuilder();
+    	c.setRequestType(ClientRequest.ClientRequestType.LIST);
+    	ClientRequest r = c.build();
+    	//send request to nameNode for list of files
+    	//receive list of files
+    	//byteString[] fileList
+    	for(String s: fileList) {
+    		System.out.println(s);
+    	}
     }
 
     public static void main(String[] args) throws RemoteException, UnknownHostException
