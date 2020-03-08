@@ -5,6 +5,9 @@ package hdfs;
 option java_package = "ds.hdfs";
 option java_outer_classname = "Proto_Defn";
 
+/*HELPER*/
+
+//helper for ReturnChunkLocations
 message DataNodeInfo{
 	required int32 id = 1; //not sure how to assign ids yet
 	required string name = 2;
@@ -12,12 +15,35 @@ message DataNodeInfo{
 	required int32 port = 4;
 }
 
+//helper for ReturnChunkLocations
+message ChunkLocations{
+	repeated DataNodeInfo dataNodeInfo = 1;
+	required string chunkName = 2;
+}
+
+
+
+/*DATA NODE MESSAGES*/
 //dataNode -> nameNode
 message BlockReport{ 
 	required DataNodeInfo dataNodeInfo = 1;
 	repeated string chunkName = 2; //i.e foo101
 }
 
+//dataNode -> client
+message ReadBlockResponse{
+	required bool status = 1;
+	required bytes bytes = 2;
+}
+
+//dataNode -> client
+message WriteBlockResponse{
+	required bool status = 1;
+}
+
+
+
+/*CLIENT MESSAGES*/
 //client -> nameNode
 message ClientRequest{
 	enum ClientRequestType{
@@ -29,19 +55,26 @@ message ClientRequest{
 	optional string fileName = 2;
 }
 
+//client -> dataNode
+message ReadBlockRequest{
+	required string chunkName = 1;
+}
+
+//client -> dataNode
+message WriteBlockRequest{
+	required string chunkName = 1;
+	required bytes bytes = 2;
+}
 
 
+
+/*NAME NODE MESSAGES*/
+
+//can use for both Get and Put
 //nameNode -> client
-message GetResult{
+message ReturnChunkLocations{
 	repeated ChunkLocations locations = 1;
 }
-
-message ChunkLocations{
-	repeated DataNodeInfo dataNodeInfo = 1;
-	required string chunkName = 2;
-}
-
-
 
 //nameNode -> client
 message ListResult{

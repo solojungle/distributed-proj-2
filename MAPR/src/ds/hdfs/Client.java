@@ -12,8 +12,11 @@ import java.io.*;
 import com.google.protobuf.ByteString; 
 //import ds.hdfs.INameNode;
 
+import ds.hdfs.Proto_Defn.ChunkLocations;
 import ds.hdfs.Proto_Defn.ClientRequest;
+import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ListResult;
+import ds.hdfs.Proto_Defn.ReturnChunkLocations;
 
 public class Client
 {
@@ -80,32 +83,48 @@ public class Client
 
     public void GetFile(String fileName)
     {
+    	//TODO: fill in host + port #
+    	String host = null; //hostname of server
+    	int port = -1; //port of rmi registry
+        String url = "//" + host + ":" + port + "/NameNode";
+        System.out.println("looking up " + url);
+        
+        INameNode nameNode = (INameNode)Naming.lookup(url);
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
     	ClientRequest r = c.build();
-    	//contact nameNode
-    	//open call
-    	//get list of file locations
-    	//for each location
-    		//get chunk
-    		//if failed, try replicated chunks
-    		//if all fail, report error
+    	byte[] input = r.toByteArray();
     	
-    	//write file to local file system
-    	
-    	//TODO: fix up types with protobuf and bytestreams and whatnot
-    	try { 
-            OutputStream os = new FileOutputStream(fileName); 
+    	try {
+    		byte[] resultBytes = nameNode.getBlockLocations(input);
+    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(resultBytes);
+    		List<ChunkLocations> locations = fileList.getLocationsList();
+			//TODO: sort location list by sequence number
+    		for(ChunkLocations l: locations) {
+    			String chunkName = l.getChunkName();
+    			for(DataNodeInfo d: l.getDataNodeInfoList()) {
+    				//fetch chunk
+    				//if success, store into memory
+    					//continue
+    				//if all fail, report error
+    				IDataNode dataNode = (IDataNode)Naming.lookup(url2);
+    				dataNode.readBlock(request); //put in own try catch block
+    			}
+    		}
+    		OutputStream os = new FileOutputStream(fileName); 
             for(ByteStream b: streams) {
                 os.write(b); 
             }
             os.close(); 
-        } 
-        catch (Exception e) { 
-            System.out.println("Exception: " + e); 
-        } 
-    	
+    	}
+    	catch(RemoteException e) {
+    		 System.err.println("Server Exception: " + e.toString());
+             e.printStackTrace();
+    	}
+    	catch (Exception e) {
+    		System.out.println("Exception: " + e); 
+    	}    	
     }
 
     public void List()
