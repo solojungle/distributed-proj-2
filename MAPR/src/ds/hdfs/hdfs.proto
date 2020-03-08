@@ -5,13 +5,17 @@ package hdfs;
 option java_package = "ds.hdfs";
 option java_outer_classname = "Proto_Defn";
 
-//dataNode -> nameNode
-message BlockReport{ 
+message DataNodeInfo{
 	required int32 id = 1; //not sure how to assign ids yet
 	required string name = 2;
 	required string ip = 3;
 	required int32 port = 4;
-	repeated string chunkName = 5; //i.e foo101
+}
+
+//dataNode -> nameNode
+message BlockReport{ 
+	required DataNodeInfo dataNodeInfo = 1;
+	repeated string chunkName = 2; //i.e foo101
 }
 
 //client -> nameNode
@@ -24,6 +28,20 @@ message ClientRequest{
 	required ClientRequestType requestType = 1;
 	optional string fileName = 2;
 }
+
+
+
+//nameNode -> client
+message GetResult{
+	repeated ChunkLocations locations = 1;
+}
+
+message ChunkLocations{
+	repeated DataNodeInfo dataNodeInfo = 1;
+	required string chunkName = 2;
+}
+
+
 
 //nameNode -> client
 message ListResult{

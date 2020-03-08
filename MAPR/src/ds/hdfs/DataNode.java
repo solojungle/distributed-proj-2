@@ -19,7 +19,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 import ds.hdfs.IDataNode.*;
-import ds.hdfs.Proto_Defn.BlockReport;;
+import ds.hdfs.Proto_Defn.BlockReport;
+import ds.hdfs.Proto_Defn.DataNodeInfo;;
 
 public class DataNode implements IDataNode
 {
@@ -91,10 +92,12 @@ public class DataNode implements IDataNode
     public void BlockReport() throws IOException
     {
     	BlockReport.Builder b = BlockReport.newBuilder();
-    	b.setId(MyID);
-    	b.setName(MyName);
-    	b.setIp(MyIP);
-    	b.setPort(MyPort);
+    	DataNodeInfo.Builder d = DataNodeInfo.newBuilder();
+    	d.setId(MyID);
+    	d.setName(MyName);
+    	d.setIp(MyIP);
+    	d.setPort(MyPort);
+    	b.setDataNodeInfo(d);
     	for(String s: MyChunks) {
     		b.addChunkName(s);
     	}
