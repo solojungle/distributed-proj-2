@@ -24,3 +24,8 @@ message ClientRequest{
 	required ClientRequestType requestType = 1;
 	optional string fileName = 2;
 }
+
+//nameNode -> client
+message ListResult{
+	repeated string fileName = 1;
+}

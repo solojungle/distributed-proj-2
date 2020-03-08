@@ -13,6 +13,7 @@ import com.google.protobuf.ByteString;
 //import ds.hdfs.INameNode;
 
 import ds.hdfs.Proto_Defn.ClientRequest;
+import ds.hdfs.Proto_Defn.ListResult;
 
 public class Client
 {
@@ -108,16 +109,31 @@ public class Client
     }
 
     public void List()
-    {
+    {	
+    	//TODO: fill in host + port #
+    	String host = null; //hostname of server
+    	int port = -1; //port of rmi registry
+        String url = "//" + host + ":" + port + "/NameNode";
+        System.out.println("looking up " + url);
+        
+        INameNode nameNode = (INameNode)Naming.lookup(url);
+        
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.LIST);
     	ClientRequest r = c.build();
-    	//send request to nameNode for list of files
-    	//receive list of files
-    	//byteString[] fileList
-    	for(String s: fileList) {
-    		System.out.println(s);
+    	byte[] input = r.toByteArray();
+    	try {
+    		byte[] resultBytes = nameNode.list(input);
+    		ListResult fileList = ListResult.parseFrom(resultBytes);
+    		for(String s: fileList.getFileNameList()) {
+    			System.out.println(s);
+    		}
     	}
+    	catch(RemoteException e) {
+    		 System.err.println("Server Exception: " + e.toString());
+             e.printStackTrace();
+    	}
+    	
     }
 
     public static void main(String[] args) throws RemoteException, UnknownHostException
