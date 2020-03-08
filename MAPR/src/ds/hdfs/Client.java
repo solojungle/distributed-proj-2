@@ -16,6 +16,7 @@ import ds.hdfs.Proto_Defn.ChunkLocations;
 import ds.hdfs.Proto_Defn.ClientRequest;
 import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ListResult;
+import ds.hdfs.Proto_Defn.ReadBlockRequest;
 import ds.hdfs.Proto_Defn.ReadBlockResponse;
 import ds.hdfs.Proto_Defn.ReturnChunkLocations;
 
@@ -94,38 +95,48 @@ public class Client
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
-    	ClientRequest r = c.build();
-    	byte[] input = r.toByteArray();
+    	byte[] input = c.build().toByteArray();
     	
     	try {
-    		byte[] resultBytes = nameNode.getBlockLocations(input);
-    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(resultBytes);
+    		byte[] locationBytes = nameNode.getBlockLocations(input);
+    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(locationBytes);
     		List<ChunkLocations> locations = fileList.getLocationsList();
+    		ArrayList<byte[]> streams = new ArrayList<byte[]>();
 			//TODO: sort location list by sequence number
+    		//loop through each chunk
     		for(ChunkLocations l: locations) {
     			String chunkName = l.getChunkName();
     			List <DataNodeInfo> list = l.getDataNodeInfoList();
     			for(DataNodeInfo d: list) {
     				int i = 0;
+					//build request to DN
+					ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
+			    	DNrequest.setChunkName(chunkName);
+			    	byte[] r = DNrequest.build().toByteArray();
+			    	
+    				//loop through each location of the given chunk until DN successfully returns bytes
     				ReadBlockResponse response;
     				do {
-    					IDataNode dataNode = (IDataNode)Naming.lookup(url2);
-    					byte[] b = dataNode.readBlock(request);
+    					//build request URL for dataNode
+    					String DNurl = null; //TODO: fill in url using ip + port
+    					IDataNode dataNode = (IDataNode)Naming.lookup(DNurl);
+
+    					byte[] b = dataNode.readBlock(r);  //make request
     					response = ReadBlockResponse.parseFrom(b);
+    					
     				} while(i++ < list.size() && response.getStatus()==false);
     				if(i >= list.size()) { //all failed to read
     					System.out.println("error: failed to retrieve file");
     					return;
     				}
-    				
-    				//store in memory 
-    				//response.getBytes();
+    				streams.add(response.getBytes()); //store bytes in memory
     			}
     		}
-            for(ByteStream b: streams) {
-                os.write(b); 
+    		FileOutputStream output = new FileOutputStream(fileName, true);
+            for(byte[] b: streams) {
+            	output.write(b);
             }
-            os.close(); 
+            output.close(); 
     	}
     	catch(RemoteException e) {
     		 System.err.println("Server Exception: " + e.toString());
