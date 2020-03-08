@@ -74,6 +74,7 @@ message WriteBlockRequest{
 //nameNode -> client
 message ReturnChunkLocations{
 	repeated ChunkLocations locations = 1;
+	optional int32 blockSize = 2; //block size in GB for Put requests
 }
 
 //nameNode -> client

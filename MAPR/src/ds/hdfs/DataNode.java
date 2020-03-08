@@ -40,6 +40,7 @@ public class DataNode implements IDataNode
 
     
     //IGNORE FOR THIS PART OF PROJECT
+    /*
     public static void appendtoFile(String Filename, String Line)
     {
         BufferedWriter bw = null;
@@ -59,7 +60,7 @@ public class DataNode implements IDataNode
             }
         }
 
-    }
+    }*/
 
     public byte[] readBlock(byte[] input)
     {

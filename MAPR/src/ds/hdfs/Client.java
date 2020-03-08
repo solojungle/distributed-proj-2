@@ -16,6 +16,7 @@ import ds.hdfs.Proto_Defn.ChunkLocations;
 import ds.hdfs.Proto_Defn.ClientRequest;
 import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ListResult;
+import ds.hdfs.Proto_Defn.ReadBlockResponse;
 import ds.hdfs.Proto_Defn.ReturnChunkLocations;
 
 public class Client
@@ -103,16 +104,24 @@ public class Client
 			//TODO: sort location list by sequence number
     		for(ChunkLocations l: locations) {
     			String chunkName = l.getChunkName();
-    			for(DataNodeInfo d: l.getDataNodeInfoList()) {
-    				//fetch chunk
-    				//if success, store into memory
-    					//continue
-    				//if all fail, report error
-    				IDataNode dataNode = (IDataNode)Naming.lookup(url2);
-    				dataNode.readBlock(request); //put in own try catch block
+    			List <DataNodeInfo> list = l.getDataNodeInfoList();
+    			for(DataNodeInfo d: list) {
+    				int i = 0;
+    				ReadBlockResponse response;
+    				do {
+    					IDataNode dataNode = (IDataNode)Naming.lookup(url2);
+    					byte[] b = dataNode.readBlock(request);
+    					response = ReadBlockResponse.parseFrom(b);
+    				} while(i++ < list.size() && response.getStatus()==false);
+    				if(i >= list.size()) { //all failed to read
+    					System.out.println("error: failed to retrieve file");
+    					return;
+    				}
+    				
+    				//store in memory 
+    				//response.getBytes();
     			}
     		}
-    		OutputStream os = new FileOutputStream(fileName); 
             for(ByteStream b: streams) {
                 os.write(b); 
             }

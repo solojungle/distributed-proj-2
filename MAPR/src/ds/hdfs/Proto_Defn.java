@@ -6362,6 +6362,25 @@ public final class Proto_Defn {
      */
     ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder getLocationsOrBuilder(
         int index);
+
+    /**
+     * <pre>
+     *block size in GB for Put requests
+     * </pre>
+     *
+     * <code>optional int32 blockSize = 2;</code>
+     * @return Whether the blockSize field is set.
+     */
+    boolean hasBlockSize();
+    /**
+     * <pre>
+     *block size in GB for Put requests
+     * </pre>
+     *
+     * <code>optional int32 blockSize = 2;</code>
+     * @return The blockSize.
+     */
+    int getBlockSize();
   }
   /**
    * <pre>
@@ -6424,6 +6443,11 @@ public final class Proto_Defn {
                   input.readMessage(ds.hdfs.Proto_Defn.ChunkLocations.PARSER, extensionRegistry));
               break;
             }
+            case 16: {
+              bitField0_ |= 0x00000001;
+              blockSize_ = input.readInt32();
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -6459,6 +6483,7 @@ public final class Proto_Defn {
               ds.hdfs.Proto_Defn.ReturnChunkLocations.class, ds.hdfs.Proto_Defn.ReturnChunkLocations.Builder.class);
     }
 
+    private int bitField0_;
     public static final int LOCATIONS_FIELD_NUMBER = 1;
     private java.util.List<ds.hdfs.Proto_Defn.ChunkLocations> locations_;
     /**
@@ -6494,6 +6519,31 @@ public final class Proto_Defn {
       return locations_.get(index);
     }
 
+    public static final int BLOCKSIZE_FIELD_NUMBER = 2;
+    private int blockSize_;
+    /**
+     * <pre>
+     *block size in GB for Put requests
+     * </pre>
+     *
+     * <code>optional int32 blockSize = 2;</code>
+     * @return Whether the blockSize field is set.
+     */
+    public boolean hasBlockSize() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     *block size in GB for Put requests
+     * </pre>
+     *
+     * <code>optional int32 blockSize = 2;</code>
+     * @return The blockSize.
+     */
+    public int getBlockSize() {
+      return blockSize_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -6517,6 +6567,9 @@ public final class Proto_Defn {
       for (int i = 0; i < locations_.size(); i++) {
         output.writeMessage(1, locations_.get(i));
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeInt32(2, blockSize_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6529,6 +6582,10 @@ public final class Proto_Defn {
       for (int i = 0; i < locations_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, locations_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, blockSize_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6547,6 +6604,11 @@ public final class Proto_Defn {
 
       if (!getLocationsList()
           .equals(other.getLocationsList())) return false;
+      if (hasBlockSize() != other.hasBlockSize()) return false;
+      if (hasBlockSize()) {
+        if (getBlockSize()
+            != other.getBlockSize()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6561,6 +6623,10 @@ public final class Proto_Defn {
       if (getLocationsCount() > 0) {
         hash = (37 * hash) + LOCATIONS_FIELD_NUMBER;
         hash = (53 * hash) + getLocationsList().hashCode();
+      }
+      if (hasBlockSize()) {
+        hash = (37 * hash) + BLOCKSIZE_FIELD_NUMBER;
+        hash = (53 * hash) + getBlockSize();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -6707,6 +6773,8 @@ public final class Proto_Defn {
         } else {
           locationsBuilder_.clear();
         }
+        blockSize_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -6734,6 +6802,7 @@ public final class Proto_Defn {
       public ds.hdfs.Proto_Defn.ReturnChunkLocations buildPartial() {
         ds.hdfs.Proto_Defn.ReturnChunkLocations result = new ds.hdfs.Proto_Defn.ReturnChunkLocations(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (locationsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             locations_ = java.util.Collections.unmodifiableList(locations_);
@@ -6743,6 +6812,11 @@ public final class Proto_Defn {
         } else {
           result.locations_ = locationsBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.blockSize_ = blockSize_;
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -6816,6 +6890,9 @@ public final class Proto_Defn {
               locationsBuilder_.addAllMessages(other.locations_);
             }
           }
+        }
+        if (other.hasBlockSize()) {
+          setBlockSize(other.getBlockSize());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7090,6 +7167,59 @@ public final class Proto_Defn {
           locations_ = null;
         }
         return locationsBuilder_;
+      }
+
+      private int blockSize_ ;
+      /**
+       * <pre>
+       *block size in GB for Put requests
+       * </pre>
+       *
+       * <code>optional int32 blockSize = 2;</code>
+       * @return Whether the blockSize field is set.
+       */
+      public boolean hasBlockSize() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <pre>
+       *block size in GB for Put requests
+       * </pre>
+       *
+       * <code>optional int32 blockSize = 2;</code>
+       * @return The blockSize.
+       */
+      public int getBlockSize() {
+        return blockSize_;
+      }
+      /**
+       * <pre>
+       *block size in GB for Put requests
+       * </pre>
+       *
+       * <code>optional int32 blockSize = 2;</code>
+       * @param value The blockSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlockSize(int value) {
+        bitField0_ |= 0x00000002;
+        blockSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *block size in GB for Put requests
+       * </pre>
+       *
+       * <code>optional int32 blockSize = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBlockSize() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        blockSize_ = 0;
+        onChanged();
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -7862,10 +7992,10 @@ public final class Proto_Defn {
       "uestType\022\007\n\003GET\020\000\022\007\n\003PUT\020\001\022\010\n\004LIST\020\002\"%\n\020" +
       "ReadBlockRequest\022\021\n\tchunkName\030\001 \002(\t\"5\n\021W" +
       "riteBlockRequest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005b" +
-      "ytes\030\002 \002(\014\"?\n\024ReturnChunkLocations\022\'\n\tlo" +
-      "cations\030\001 \003(\0132\024.hdfs.ChunkLocations\"\036\n\nL" +
-      "istResult\022\020\n\010fileName\030\001 \003(\tB\025\n\007ds.hdfsB\n" +
-      "Proto_Defn"
+      "ytes\030\002 \002(\014\"R\n\024ReturnChunkLocations\022\'\n\tlo" +
+      "cations\030\001 \003(\0132\024.hdfs.ChunkLocations\022\021\n\tb" +
+      "lockSize\030\002 \001(\005\"\036\n\nListResult\022\020\n\010fileName" +
+      "\030\001 \003(\tB\025\n\007ds.hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -7924,7 +8054,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ReturnChunkLocations_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ReturnChunkLocations_descriptor,
-        new java.lang.String[] { "Locations", });
+        new java.lang.String[] { "Locations", "BlockSize", });
     internal_static_hdfs_ListResult_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_hdfs_ListResult_fieldAccessorTable = new
