@@ -41,6 +41,17 @@ public class DataNode implements IDataNode
     
     public DataNode()
     {
+    	//look up NameNode
+    	try {
+			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
+			String[] fields = line.split(";");
+			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
+			
+		} catch (Exception e) {
+			System.err.println("error reading nn_config.txt");
+			e.printStackTrace();
+		}
+    	
     	//load chunks into MyChunks arr
     }
     
