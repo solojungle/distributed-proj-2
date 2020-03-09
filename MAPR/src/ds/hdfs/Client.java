@@ -1,5 +1,7 @@
 package ds.hdfs;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -27,8 +29,15 @@ public class Client
     public IDataNode DNStub; //Data Node stub
     public Client()
     {
-        //Get the Name Node Stub
-        //nn_details contain NN details in the format Server;IP;Port
+    	try {
+			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
+			String[] fields = line.split(";");
+			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
+			
+		} catch (Exception e) {
+			System.err.println("error reading nn_config.txt");
+			e.printStackTrace();
+		}
     }
 
     public IDataNode GetDNStub(String Name, String IP, int Port)
