@@ -43,6 +43,8 @@ public class DataNode implements IDataNode
     {
     	//load chunks into MyChunks arr
     }
+    
+    
 
     
     //IGNORE FOR THIS PART OF PROJECT
@@ -121,20 +123,9 @@ public class DataNode implements IDataNode
     		b.addChunkName(s);
     	}
     	BlockReport r = b.build();
-    	
-    	//TODO: fill in host + port #
-    	String host = null; //hostname of server
-    	int port = -1; //port of rmi registry
-        String url = "//" + host + ":" + port + "/NameNode";
-        System.out.println("looking up " + url);
-        
-        try {
-			INameNode nameNode = (INameNode)Naming.lookup(url);
-			nameNode.blockReport(b.build().toByteArray());
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+       
+    	NNStub.blockReport(b.build().toByteArray());
+
     	
     }
 
