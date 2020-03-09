@@ -4,10 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * 1. Interface is public
- * 2. Extends the Remote interface
- * 3. Defines methods that will be accessed remotely
- * 4. Each method must throw a RemoteException
+ * A remote interface extends the interface java.rmi.Remote and declares a set of remote methods.
+ * Each method must throw a RemoteException
  */
 public interface INameNode extends Remote {
 

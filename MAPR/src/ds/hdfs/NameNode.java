@@ -3,11 +3,17 @@ package ds.hdfs;
 import ds.hdfs.hdfsformat.*;
 
 import java.io.IOException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
+/**
+ * Creates an instance of the remote object implementation,
+ * Exports the remote object,
+ * and then binds that instance to a name in a Java RMI registry.
+ */
 public class NameNode implements INameNode {
 
     /**
@@ -35,21 +41,27 @@ public class NameNode implements INameNode {
      * @throws IOException
      */
     public static void main(String[] args) throws InterruptedException, NumberFormatException, IOException {
+        try {
+            /* Create remote object that provides the service */
+            NameNode obj = new NameNode("localhost", 3000, "nn");
 
+            /* Remote object exported to the Java RMI runtime so that it may receive incoming remote calls */
+            INameNode stub = (INameNode) UnicastRemoteObject.exportObject(obj, 0);
 
-        // Grab IP Address + Port
+            /*
+             * Returns a stub that implements the remote interface java.rmi.registry.
+             * Sends invocations to the registry on server's local host on the default registry port of 1099.
+             * */
+            Registry registry = LocateRegistry.getRegistry();
 
-        int port = 10;
-        String addr = "127";
+            /* Bind the remote object's stub in the registry. */
+            registry.bind("NameNode", stub);
 
-
-        /* Create an instance of the NameNode server */
-        NameNode server = new NameNode("1asdads23", 1, "asd");
-
-        /* Register the instance with the name server (rmiregisty) */
-        Naming.rebind("NameNode", server);
-
-        System.out.println("Server is running on port: " + port);
+            System.out.println("Server is running...");
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
+        }
     }
 
     /**
