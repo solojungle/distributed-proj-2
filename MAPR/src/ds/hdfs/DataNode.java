@@ -172,8 +172,25 @@ public class DataNode implements IDataNode
 
     public static void main(String args[]) throws InvalidProtocolBufferException, IOException
     {
+    	//TODO multithreading
+    	
         //Define a Datanode Me
-        DataNode Me = new DataNode();        
+        DataNode Me = new DataNode();   
+        try {
+            int port = -1;
+
+            // create the URL to contact the rmiregistry
+            String url = "//localhost:" + port + "/DataNode";
+            System.out.println("binding " + url);
+
+            // register it with rmiregistry
+            Naming.rebind(url, Me);
+
+            System.out.println("dataNode " + url + " is running...");
+        }
+        catch (Exception e) {
+            System.out.println("dataNode failed:" + e.getMessage());
+        }
 
     }
 }
