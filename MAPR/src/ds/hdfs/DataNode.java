@@ -2,7 +2,6 @@
 package ds.hdfs;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.util.*;
@@ -16,11 +15,18 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import ds.hdfs.IDataNode.*;
 import ds.hdfs.Proto_Defn.BlockReport;
-import ds.hdfs.Proto_Defn.DataNodeInfo;;
+import ds.hdfs.Proto_Defn.DataNodeInfo;
+import ds.hdfs.Proto_Defn.ReadBlockRequest;
+import ds.hdfs.Proto_Defn.ReadBlockResponse;
+import ds.hdfs.Proto_Defn.WriteBlockRequest;
+import ds.hdfs.Proto_Defn.WriteBlockResponse;;
 
 public class DataNode implements IDataNode
 {
@@ -64,13 +70,19 @@ public class DataNode implements IDataNode
 
     public byte[] readBlock(byte[] input)
     {
+    	ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
+    	String fileName = r.getChunkName();
+    	ReadBlockResponse.Builder response = ReadBlockResponse.newBuilder();
         try
         {
+        	byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+        	response.setBytes(bytes);
+        	response.setStatus(true);
         }
         catch(Exception e)
         {
             System.out.println("Error at readBlock");
-            response.setStatus(-1);
+            response.setStatus(false);
         }
 
         return response.build().toByteArray();
@@ -78,15 +90,21 @@ public class DataNode implements IDataNode
 
     public byte[] writeBlock(byte[] input)
     {
+    	WriteBlockRequest w = WriteBlockRequest.parseFrom(input);
+    	String fileName = w.getChunkName();
+    	WriteBlockResponse.Builder response = WriteBlockResponse.newBuilder();
         try
         {
+        	FileOutputStream output = new FileOutputStream(fileName, false);
+            output.write(w.getBytes());
+            output.close(); 
+            response.setStatus(true);
         }
         catch(Exception e)
         {
             System.out.println("Error at writeBlock ");
-            response.setStatus(-1);
+            response.setStatus(false);
         }
-
         return response.build().toByteArray();
     }
 
@@ -103,7 +121,20 @@ public class DataNode implements IDataNode
     		b.addChunkName(s);
     	}
     	BlockReport r = b.build();
-    	//send r to nameNode
+    	
+    	//TODO: fill in host + port #
+    	String host = null; //hostname of server
+    	int port = -1; //port of rmi registry
+        String url = "//" + host + ":" + port + "/NameNode";
+        System.out.println("looking up " + url);
+        
+        try {
+			INameNode nameNode = (INameNode)Naming.lookup(url);
+			nameNode.blockReport(b.build().toByteArray());
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     }
 
