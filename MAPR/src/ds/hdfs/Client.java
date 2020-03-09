@@ -70,11 +70,14 @@ public class Client
             System.out.println("File not found !!!");
             return;
         }
-        
-        ClientRequest.Builder c = ClientRequest.newBuilder();
+    	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.PUT);
     	c.setFileName(fileName);
-    	ClientRequest r = c.build();
+    	byte[] input = c.build().toByteArray();
+    	
+    	byte[] NNresponse = NNStub.getBlockLocations(input);
+		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
+    	
         //contact nameNode
         //get list of file locations
     	//for each location
@@ -84,22 +87,15 @@ public class Client
     }
 
     public void GetFile(String fileName)
-    {
-    	//TODO: fill in host + port #
-    	String host = null; //hostname of server
-    	int port = -1; //port of rmi registry
-        String url = "//" + host + ":" + port + "/NameNode";
-        System.out.println("looking up " + url);
-        
-        INameNode nameNode = (INameNode)Naming.lookup(url);
+    {   
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
     	try {
-    		byte[] locationBytes = nameNode.getBlockLocations(input);
-    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(locationBytes);
+    		byte[] NNresponse = NNStub.getBlockLocations(input);
+    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
     		List<ChunkLocations> locations = fileList.getLocationsList();
     		ArrayList<byte[]> streams = new ArrayList<byte[]>();
 			//TODO: sort location list by sequence number
@@ -117,10 +113,7 @@ public class Client
     				//loop through each location of the given chunk until DN successfully returns bytes
     				ReadBlockResponse response;
     				do {
-    					//build request URL for dataNode
-    					String DNurl = null; //TODO: fill in url using ip + port
-    					IDataNode dataNode = (IDataNode)Naming.lookup(DNurl);
-
+    					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
     					byte[] b = dataNode.readBlock(r);  //make request
     					response = ReadBlockResponse.parseFrom(b);
     					
@@ -149,20 +142,12 @@ public class Client
 
     public void List()
     {	
-    	//TODO: fill in host + port #
-    	String host = null; //hostname of server
-    	int port = -1; //port of rmi registry
-        String url = "//" + host + ":" + port + "/NameNode";
-        System.out.println("looking up " + url);
-        
-        INameNode nameNode = (INameNode)Naming.lookup(url);
-        
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.LIST);
     	ClientRequest r = c.build();
     	byte[] input = r.toByteArray();
     	try {
-    		byte[] resultBytes = nameNode.list(input);
+    		byte[] resultBytes = NNStub.list(input);
     		ListResult fileList = ListResult.parseFrom(resultBytes);
     		for(String s: fileList.getFileNameList()) {
     			System.out.println(s);
