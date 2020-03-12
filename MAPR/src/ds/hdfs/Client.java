@@ -13,6 +13,7 @@ import java.io.*;
 
 import com.google.protobuf.ByteString; 
 //import ds.hdfs.INameNode;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import ds.hdfs.Proto_Defn.ChunkLocations;
 import ds.hdfs.Proto_Defn.ClientRequest;
@@ -30,9 +31,9 @@ public class Client
     public Client()
     {
     	try {
-			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
-			String[] fields = line.split(";");
-			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
+			//String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
+			//String[] fields = line.split(";");
+			//NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
 			
 		} catch (Exception e) {
 			System.err.println("error reading nn_config.txt");
@@ -131,7 +132,7 @@ public class Client
     					System.out.println("error: failed to retrieve file");
     					return;
     				}
-    				streams.add(response.getBytes()); //store bytes in memory
+    				streams.add(response.getBytes().toByteArray()); //store bytes in memory
     			}
     		}
     		FileOutputStream output = new FileOutputStream(fileName, true);
@@ -162,7 +163,7 @@ public class Client
     			System.out.println(s);
     		}
     	}
-    	catch(RemoteException e) {
+    	catch(RemoteException | InvalidProtocolBufferException e) {
     		 System.err.println("Server Exception: " + e.toString());
              e.printStackTrace();
     	}

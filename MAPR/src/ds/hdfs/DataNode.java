@@ -89,7 +89,7 @@ public class DataNode implements IDataNode
         try
         {
         	byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-        	response.setBytes(bytes);
+        	response.setBytes(ByteString.copyFrom(bytes));
         	response.setStatus(true);
         }
         catch(Exception e)
@@ -109,7 +109,7 @@ public class DataNode implements IDataNode
         try
         {
         	FileOutputStream output = new FileOutputStream(fileName, false);
-            output.write(w.getBytes());
+            output.write(w.getBytes().toByteArray());
             output.close(); 
             response.setStatus(true);
         }
