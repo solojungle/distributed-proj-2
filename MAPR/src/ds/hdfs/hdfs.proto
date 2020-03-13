@@ -73,8 +73,8 @@ message WriteBlockRequest{
 //can use for both Get and Put
 //nameNode -> client
 message ReturnChunkLocations{
-	repeated ChunkLocations locations = 1;
-	optional int32 blockSize = 2; //block size in GB for Put requests
+	repeated ChunkLocations locations = 1; //sorted by chunk number
+	optional int32 blockSize = 2; //block size in Bytes
 }
 
 //nameNode -> client
