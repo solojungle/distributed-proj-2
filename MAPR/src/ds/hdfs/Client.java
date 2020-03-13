@@ -22,6 +22,8 @@ import ds.hdfs.Proto_Defn.ListResult;
 import ds.hdfs.Proto_Defn.ReadBlockRequest;
 import ds.hdfs.Proto_Defn.ReadBlockResponse;
 import ds.hdfs.Proto_Defn.ReturnChunkLocations;
+import ds.hdfs.Proto_Defn.WriteBlockRequest;
+import ds.hdfs.Proto_Defn.WriteBlockResponse;
 
 public class Client
 {
@@ -80,20 +82,67 @@ public class Client
             System.out.println("File not found !!!");
             return;
         }
+        
+        //contact nameNode
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.PUT);
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
-    	byte[] NNresponse = NNStub.getBlockLocations(input);
-		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
-    	
-        //contact nameNode
-        //get list of file locations
-    	//for each location
-    		//send chunk
-    		//if failed, try other DNs
-    		//if all fail, report error
+    	byte[] NNresponse;
+    	ReturnChunkLocations fileList;
+    	int blockSize;
+		try {
+			NNresponse = NNStub.getBlockLocations(input);
+			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			blockSize = fileList.getBlockSize();
+		} catch (Exception e) {
+			System.out.println("Error contacting nameNode");
+			e.printStackTrace();
+            return;
+		}
+		
+		//TODO: split file into chunks
+		ArrayList<byte[]> chunks = new ArrayList<byte[]>();
+		
+		
+		//send chunks to each dataNode
+		List<ChunkLocations> locations = fileList.getLocationsList();
+		int chunkNum = 0;
+		
+		
+		for(ChunkLocations l: locations) {
+			String chunkName = l.getChunkName();
+			List <DataNodeInfo> list = l.getDataNodeInfoList();
+			
+			//build request to DN
+			WriteBlockRequest.Builder DNrequest = WriteBlockRequest.newBuilder();
+	    	DNrequest.setChunkName(chunkName);
+	    	DNrequest.setBytes(ByteString.copyFrom(chunks.get(chunkNum)));
+	    	byte[] r = DNrequest.build().toByteArray();
+	    	
+			//loop through each location of the given chunk until DN successfully returns bytes
+			WriteBlockResponse response = null;
+			
+			for(DataNodeInfo d: list) {
+				int i = 0;
+				do {
+					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
+					try {
+						byte[] b = dataNode.writeBlock(r);  //make request
+						response = WriteBlockResponse.parseFrom(b);
+					} catch (Exception e) {
+						System.out.println("error contacting dataNode: "+d.toString());
+					}
+					
+				} while(i++ < list.size() && response.getStatus()==false);
+				if(i >= list.size()) { //all failed to write
+					System.out.println("error: failed to write file");
+					return;
+				}
+			}
+			chunkNum++;
+		}
     }
 
     public void GetFile(String fileName)
@@ -103,51 +152,49 @@ public class Client
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
-    	try {
-    		byte[] NNresponse = NNStub.getBlockLocations(input);
-    		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
-    		List<ChunkLocations> locations = fileList.getLocationsList();
-    		ArrayList<byte[]> streams = new ArrayList<byte[]>();
-			//TODO: sort location list by sequence number
-    		//loop through each chunk
-    		for(ChunkLocations l: locations) {
-    			String chunkName = l.getChunkName();
-    			List <DataNodeInfo> list = l.getDataNodeInfoList();
-    			for(DataNodeInfo d: list) {
-    				int i = 0;
-					//build request to DN
-					ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
-			    	DNrequest.setChunkName(chunkName);
-			    	byte[] r = DNrequest.build().toByteArray();
-			    	
-    				//loop through each location of the given chunk until DN successfully returns bytes
-    				ReadBlockResponse response;
-    				do {
-    					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
-    					byte[] b = dataNode.readBlock(r);  //make request
-    					response = ReadBlockResponse.parseFrom(b);
-    					
-    				} while(i++ < list.size() && response.getStatus()==false);
-    				if(i >= list.size()) { //all failed to read
-    					System.out.println("error: failed to retrieve file");
-    					return;
-    				}
-    				streams.add(response.getBytes().toByteArray()); //store bytes in memory
-    			}
-    		}
-    		FileOutputStream output = new FileOutputStream(fileName, true);
-            for(byte[] b: streams) {
-            	output.write(b);
-            }
-            output.close(); 
-    	}
-    	catch(RemoteException e) {
-    		 System.err.println("Server Exception: " + e.toString());
-             e.printStackTrace();
-    	}
-    	catch (Exception e) {
-    		System.out.println("Exception: " + e); 
-    	}    	
+   
+		byte[] NNresponse = NNStub.getBlockLocations(input);
+		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
+		List<ChunkLocations> locations = fileList.getLocationsList();
+		ArrayList<byte[]> streams = new ArrayList<byte[]>();
+		//TODO: sort location list by sequence number
+		//loop through each chunk
+		for(ChunkLocations l: locations) {
+			String chunkName = l.getChunkName();
+			List <DataNodeInfo> list = l.getDataNodeInfoList();
+			for(DataNodeInfo d: list) {
+				int i = 0;
+				//build request to DN
+				ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
+		    	DNrequest.setChunkName(chunkName);
+		    	byte[] r = DNrequest.build().toByteArray();
+		    	
+				//loop through each location of the given chunk until DN successfully returns bytes
+				ReadBlockResponse response = null;
+				do {
+					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
+					byte[] b;
+					try {
+						b = dataNode.readBlock(r);
+						response = ReadBlockResponse.parseFrom(b);
+					} catch (RemoteException | InvalidProtocolBufferException e) {
+						System.out.println("error contacting dataNode: "+d.toString());
+					}  
+					
+				} while(i++ < list.size() && response.getStatus()==false);
+				if(i >= list.size()) { //all failed to read
+					System.out.println("error: failed to retrieve file");
+					return;
+				}
+				streams.add(response.getBytes().toByteArray()); //store bytes in memory
+			}
+		}
+		FileOutputStream output = new FileOutputStream(fileName, true);
+        for(byte[] b: streams) {
+        	output.write(b);
+        }
+        output.close(); 
+    	
     }
 
     public void List()
