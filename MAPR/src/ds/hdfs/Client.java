@@ -101,15 +101,31 @@ public class Client
 			e.printStackTrace();
             return;
 		}
-		
-		//TODO: split file into chunks
-		ArrayList<byte[]> chunks = new ArrayList<byte[]>();
-		
+
+		//split file into chunks
+		byte[] buffer = new byte[blockSize];
+		ArrayList<byte[]> chunks = new ArrayList<byte[]>();	
+		try {
+	        while (true) {
+	        	int bytesAmount = bis.read(buffer);
+	        	if(bytesAmount <= 0) {
+	        		break;
+	        	}
+	            chunks.add(Arrays.copyOf(buffer,bytesAmount));          
+	        }
+	        
+	        if(chunks.size()==0) { //if empty file, send empty byte array to one dataNode
+	        	chunks.add(new byte[0]);
+	        }
+		} catch(Exception e) {
+			System.out.println("Error reading input file");
+			e.printStackTrace();
+            return;
+		}
 		
 		//send chunks to each dataNode
 		List<ChunkLocations> locations = fileList.getLocationsList();
 		int chunkNum = 0;
-		
 		
 		for(ChunkLocations l: locations) {
 			String chunkName = l.getChunkName();
@@ -166,7 +182,7 @@ public class Client
 
 		List<ChunkLocations> locations = fileList.getLocationsList();
 		ArrayList<byte[]> streams = new ArrayList<byte[]>();
-		//TODO: sort location list by sequence number
+		
 		//loop through each chunk
 		for(ChunkLocations l: locations) {
 			String chunkName = l.getChunkName();
