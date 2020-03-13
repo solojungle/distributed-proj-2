@@ -5,22 +5,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import ds.hdfs.IDataNode.*;
 import ds.hdfs.Proto_Defn.BlockReport;
 import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ReadBlockRequest;
@@ -83,14 +74,15 @@ public class DataNode implements IDataNode
 
     public byte[] readBlock(byte[] input)
     {
-    	ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
-    	String fileName = r.getChunkName();
-    	ReadBlockResponse.Builder response = ReadBlockResponse.newBuilder();
+        ReadBlockResponse.Builder response = ReadBlockResponse.newBuilder();
         try
         {
-        	byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-        	response.setBytes(ByteString.copyFrom(bytes));
-        	response.setStatus(true);
+        ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
+    	String fileName = r.getChunkName();
+
+       	byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+       	response.setBytes(ByteString.copyFrom(bytes));
+       	response.setStatus(true);
         }
         catch(Exception e)
         {
@@ -103,11 +95,13 @@ public class DataNode implements IDataNode
 
     public byte[] writeBlock(byte[] input)
     {
-    	WriteBlockRequest w = WriteBlockRequest.parseFrom(input);
-    	String fileName = w.getChunkName();
-    	WriteBlockResponse.Builder response = WriteBlockResponse.newBuilder();
+
+		WriteBlockResponse.Builder response = WriteBlockResponse.newBuilder();
         try
         {
+        	WriteBlockRequest w = WriteBlockRequest.parseFrom(input);
+    		String fileName = w.getChunkName();
+    		
         	FileOutputStream output = new FileOutputStream(fileName, false);
             output.write(w.getBytes().toByteArray());
             output.close(); 
@@ -133,7 +127,6 @@ public class DataNode implements IDataNode
     	for(String s: MyChunks) {
     		b.addChunkName(s);
     	}
-    	BlockReport r = b.build();
        
     	NNStub.blockReport(b.build().toByteArray());
 
@@ -179,7 +172,7 @@ public class DataNode implements IDataNode
         //Define a Datanode Me
         DataNode Me = new DataNode();   
         try {
-            int port = -1;
+        	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
 
             // create the URL to contact the rmiregistry
             String url = "//localhost:" + port + "/DataNode";
