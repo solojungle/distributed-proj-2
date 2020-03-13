@@ -153,8 +153,17 @@ public class Client
     	byte[] input = c.build().toByteArray();
     	
    
-		byte[] NNresponse = NNStub.getBlockLocations(input);
-		ReturnChunkLocations fileList = ReturnChunkLocations.parseFrom(NNresponse);
+		byte[] NNresponse;
+		ReturnChunkLocations fileList;
+		try {
+			NNresponse = NNStub.getBlockLocations(input);
+			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+		} catch (Exception e1) {
+			System.out.println("Error contacting nameNode");
+			e1.printStackTrace();
+			return;
+		}
+
 		List<ChunkLocations> locations = fileList.getLocationsList();
 		ArrayList<byte[]> streams = new ArrayList<byte[]>();
 		//TODO: sort location list by sequence number
@@ -189,12 +198,18 @@ public class Client
 				streams.add(response.getBytes().toByteArray()); //store bytes in memory
 			}
 		}
-		FileOutputStream output = new FileOutputStream(fileName, true);
-        for(byte[] b: streams) {
-        	output.write(b);
-        }
-        output.close(); 
-    	
+		FileOutputStream output;
+		try {
+			output = new FileOutputStream(fileName, true);
+			 for(byte[] b: streams) {
+		        	output.write(b);
+		     }
+		     output.close(); 
+		} catch (Exception e) {
+			System.out.println("error writing file locally");
+			e.printStackTrace();
+		}
+       
     }
 
     public void List()
