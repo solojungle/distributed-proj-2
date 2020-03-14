@@ -1,6 +1,5 @@
 package ds.hdfs;
 
-import ds.hdfs.hdfsformat.*;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -19,6 +18,11 @@ public class NameNode implements INameNode {
     /**
      *
      */
+
+    String ip;
+    String name;
+    int port;
+
     protected Registry serverRegistry;
 
     /**
@@ -52,12 +56,13 @@ public class NameNode implements INameNode {
              * Returns a stub that implements the remote interface java.rmi.registry.
              * Sends invocations to the registry on server's local host on the default registry port of 1099.
              * */
-            Registry registry = LocateRegistry.getRegistry();
+//            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.createRegistry(1100);
 
             /* Bind the remote object's stub in the registry. */
             registry.bind("NameNode", stub);
 
-            System.out.println("Server is running...");
+            System.out.println("NameNode server is running...");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
@@ -88,14 +93,16 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] openFile(byte[] inp) throws RemoteException {
-        ResponseBuilder response = Response.ok();
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at " + getClass() + e.toString());
             e.printStackTrace();
             response.setStatus(-1);
         }
-        return response.toByteArray();
+        return response.build().toByteArray();
     }
 
     /**
@@ -104,6 +111,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] closeFile(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at closefileRequest " + e.toString());
@@ -120,6 +130,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -135,6 +148,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
@@ -151,6 +167,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] list(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
@@ -166,11 +185,14 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] blockReport(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
-            response.addStatus(-1);
+            response.setStatus(-1);
         }
         return response.build().toByteArray();
     }
@@ -181,6 +203,7 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] heartBeat(byte[] inp) throws RemoteException {
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
         return response.build().toByteArray();
     }
 
