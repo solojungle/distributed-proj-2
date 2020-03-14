@@ -1,6 +1,5 @@
 package ds.hdfs;
 
-import ds.hdfs.hdfsformat.*;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -19,6 +18,11 @@ public class NameNode implements INameNode {
     /**
      *
      */
+
+    String ip;
+    String name;
+    int port;
+
     protected Registry serverRegistry;
 
     /**
@@ -88,14 +92,16 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] openFile(byte[] inp) throws RemoteException {
-        ResponseBuilder response = Response.ok();
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at " + getClass() + e.toString());
             e.printStackTrace();
             response.setStatus(-1);
         }
-        return response.toByteArray();
+        return response.build().toByteArray();
     }
 
     /**
@@ -104,6 +110,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] closeFile(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at closefileRequest " + e.toString());
@@ -120,6 +129,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -135,6 +147,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
@@ -151,6 +166,9 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] list(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
@@ -166,11 +184,14 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] blockReport(byte[] inp) throws RemoteException {
+
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+
         try {
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
-            response.addStatus(-1);
+            response.setStatus(-1);
         }
         return response.build().toByteArray();
     }
@@ -181,6 +202,7 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] heartBeat(byte[] inp) throws RemoteException {
+        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
         return response.build().toByteArray();
     }
 
