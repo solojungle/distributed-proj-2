@@ -51,8 +51,7 @@ public class DataNode implements IDataNode
 		MyChunks = new TreeSet<String>();
 		for(String f: files) {
 			MyChunks.add(f);
-		}
-    	
+		}	
     }
     
     
@@ -141,8 +140,8 @@ public class DataNode implements IDataNode
     	d.setIp(MyIP);
     	d.setPort(MyPort);
     	b.setDataNodeInfo(d);
-    	for(String s: MyChunks) {
-    		b.addChunkName(s);
+    	for(String f: MyChunks) {
+    		b.addChunkName(f);
     	}
        
     	NNStub.blockReport(b.build().toByteArray());
@@ -181,16 +180,36 @@ public class DataNode implements IDataNode
             }
         }
     }
+    
+    void BlockReportLoop() {
+        Thread t = new Thread(() -> 
+        	{
+        		try {
+        			while(true) {
+        				System.out.println("Sending block report");
+        				BlockReport();
+        				Thread.sleep(1000);
+        			}
+				} catch (IOException | InterruptedException e) {
+					System.out.println("Error sending block report");
+				}
+        	}
+        );
+        t.start();
+    }
 
     public static void main(String args[]) throws InvalidProtocolBufferException, IOException
     {
-    	//TODO multithreading
     	
         //Define a Datanode Me
         DataNode Me = new DataNode();   
+        
+        //spawn off block report thread
+        Me.BlockReportLoop();
+        
+        //connect with rmi registry
         try {
         	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
-
             // create the URL to contact the rmiregistry
             String url = "//localhost:" + port + "/DataNode";
             System.out.println("binding " + url);
