@@ -184,14 +184,14 @@ public class DataNode implements IDataNode
     void BlockReportLoop() {
         Thread t = new Thread(() -> 
         	{
-        		try {
-        			while(true) {
-        				System.out.println("Sending block report");
-        				BlockReport();
-        				Thread.sleep(1000);
-        			}
-				} catch (IOException | InterruptedException e) {
-					System.out.println("Error sending block report");
+				while(true) {
+	        		try {
+	        			System.out.println("Sending block report");
+	        			BlockReport();
+	        			Thread.sleep(1000);
+	        		} catch (IOException | InterruptedException e) {
+						System.out.println("Error sending block report");
+					}
 				}
         	}
         );
