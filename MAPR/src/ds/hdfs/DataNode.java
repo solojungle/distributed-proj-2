@@ -29,7 +29,7 @@ public class DataNode implements IDataNode
     protected int MyID;
     
     private String MyDir;
-    private Map<String,Boolean> MyChunks;
+    private TreeSet<String> MyChunks;
     
     public DataNode()
     {
@@ -48,9 +48,9 @@ public class DataNode implements IDataNode
     	File dir = new File(MyDir);
 		String[] files = dir.list();
 		Arrays.sort(files);
-		MyChunks = new HashMap<String,Boolean>();
+		MyChunks = new TreeSet<String>();
 		for(String f: files) {
-			MyChunks.put(f, true);
+			MyChunks.add(f);
 		}
     	
     }
@@ -87,7 +87,7 @@ public class DataNode implements IDataNode
         ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
     	String fileName = r.getChunkName();
         
-        if(MyChunks.get(fileName)==null) {
+        if(!MyChunks.contains(fileName)) {
         	 System.out.println("Error: "+ fileName + " not found");
              response.setStatus(false);
              return response.build().toByteArray();
@@ -118,7 +118,10 @@ public class DataNode implements IDataNode
     		
         	FileOutputStream output = new FileOutputStream(fileName, false);
             output.write(w.getBytes().toByteArray());
-            output.close(); 
+            output.close();
+            
+            MyChunks.add(fileName);
+            
             response.setStatus(true);
         }
         catch(Exception e)
