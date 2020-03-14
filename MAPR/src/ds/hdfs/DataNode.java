@@ -21,14 +21,15 @@ import ds.hdfs.Proto_Defn.WriteBlockResponse;;
 
 public class DataNode implements IDataNode
 {
-    protected String MyChunksFile;
+    //protected String MyChunksFile;
     protected INameNode NNStub;
     protected String MyIP;
     protected int MyPort;
     protected String MyName;
     protected int MyID;
-
-    private ArrayList<String> MyChunks;
+    
+    private String MyDir;
+    private Map<String,Boolean> MyChunks;
     
     public DataNode()
     {
@@ -43,11 +44,17 @@ public class DataNode implements IDataNode
 			e.printStackTrace();
 		}
     	
-    	//load chunks into MyChunks arr
+    	//load chunks list into memory
+    	File dir = new File(MyDir);
+		String[] files = dir.list();
+		Arrays.sort(files);
+		MyChunks = new HashMap<String,Boolean>();
+		for(String f: files) {
+			MyChunks.put(f, true);
+		}
+    	
     }
     
-    
-
     
     //IGNORE FOR THIS PART OF PROJECT
     /*
@@ -79,8 +86,15 @@ public class DataNode implements IDataNode
         {
         ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
     	String fileName = r.getChunkName();
-
-       	byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+        
+        if(MyChunks.get(fileName)==null) {
+        	 System.out.println("Error: "+ fileName + " not found");
+             response.setStatus(false);
+             return response.build().toByteArray();
+        }
+        
+    	String path = MyDir + fileName;
+       	byte[] bytes = Files.readAllBytes(Paths.get(path));
        	response.setBytes(ByteString.copyFrom(bytes));
        	response.setStatus(true);
         }

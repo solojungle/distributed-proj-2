@@ -33,9 +33,10 @@ public class Client
     public Client()
     {
     	try {
-			//String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
-			//String[] fields = line.split(";");
-			//NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
+    		//TODO: figure out file path
+			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
+			String[] fields = line.split(";");
+			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
 			
 		} catch (Exception e) {
 			System.err.println("error reading nn_config.txt");
