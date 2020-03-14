@@ -56,12 +56,13 @@ public class NameNode implements INameNode {
              * Returns a stub that implements the remote interface java.rmi.registry.
              * Sends invocations to the registry on server's local host on the default registry port of 1099.
              * */
-            Registry registry = LocateRegistry.getRegistry();
+//            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.createRegistry(1100);
 
             /* Bind the remote object's stub in the registry. */
             registry.bind("NameNode", stub);
 
-            System.out.println("Server is running...");
+            System.out.println("NameNode server is running...");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
