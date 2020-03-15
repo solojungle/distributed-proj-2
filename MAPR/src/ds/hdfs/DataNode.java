@@ -35,7 +35,7 @@ public class DataNode implements IDataNode
     public DataNode(int port)
     {
     	//initialize values
-    	int id = -1;
+    	MyID = -1;
     	InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();
@@ -214,7 +214,10 @@ public class DataNode implements IDataNode
 
     public static void main(String args[]) throws InvalidProtocolBufferException, IOException
     {
-    	
+    	if(args.length<1) {
+    		System.out.println("error: pass in port number for DataNode as first cmd argument");
+    		return;
+    	}
         //Define a Datanode Me
     	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
         DataNode Me = new DataNode(port);   
