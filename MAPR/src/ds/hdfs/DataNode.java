@@ -9,6 +9,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -33,6 +34,17 @@ public class DataNode implements IDataNode
     
     public DataNode()
     {
+    	//initialize values
+    	InetAddress ip;
+        try {
+            ip = InetAddress.getLocalHost();
+            MyIP = ip.toString();
+           	MyName = ip.getHostName();
+        } catch (java.net.UnknownHostException e1) {
+            e1.printStackTrace();
+        }
+    	
+    	
     	//look up NameNode
     	try {
 			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
@@ -47,7 +59,6 @@ public class DataNode implements IDataNode
     	//load chunks list into memory
     	File dir = new File(MyDir);
 		String[] files = dir.list();
-		Arrays.sort(files);
 		MyChunks = new TreeSet<String>();
 		for(String f: files) {
 			MyChunks.add(f);
