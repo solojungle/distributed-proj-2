@@ -43,8 +43,7 @@ public class DataNode implements IDataNode
         } catch (java.net.UnknownHostException e1) {
             e1.printStackTrace();
         }
-    	
-    	
+        
     	//look up NameNode
     	try {
 			String line = Files.readAllLines(Paths.get("nn_config.txt")).get(1);
@@ -57,7 +56,9 @@ public class DataNode implements IDataNode
 		}
     	
     	//load chunks list into memory
+    	//TODO: assign IDs
     	File dir = new File(MyDir);
+    	dir.mkdir(); //make directory if doesn't exist
 		String[] files = dir.list();
 		MyChunks = new TreeSet<String>();
 		for(String f: files) {
