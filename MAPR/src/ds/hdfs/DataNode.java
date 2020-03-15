@@ -48,7 +48,7 @@ public class DataNode implements IDataNode
         
     	//look up NameNode
     	try {
-			String line = Files.readAllLines(Paths.get("MAPR/src/nn_config.txt")).get(1);
+			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
 			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
 			
@@ -215,7 +215,7 @@ public class DataNode implements IDataNode
     public static void main(String args[]) throws InvalidProtocolBufferException, IOException
     {
     	if(args.length<1) {
-    		System.out.println("error: pass in port number for DataNode as first cmd argument");
+    		System.out.println("error: pass in port number for DataNode as cmd argument");
     		return;
     	}
         //Define a Datanode Me
