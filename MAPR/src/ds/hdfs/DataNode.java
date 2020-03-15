@@ -32,7 +32,7 @@ public class DataNode implements IDataNode
     private String MyDir;
     private TreeSet<String> MyChunks;
     
-    public DataNode()
+    public DataNode(int port)
     {
     	//initialize values
     	int id = -1;
@@ -41,6 +41,7 @@ public class DataNode implements IDataNode
             ip = InetAddress.getLocalHost();
             MyIP = ip.toString();
            	MyName = ip.getHostName();
+           	MyPort = port;
         } catch (java.net.UnknownHostException e1) {
             e1.printStackTrace();
         }
@@ -215,14 +216,14 @@ public class DataNode implements IDataNode
     {
     	
         //Define a Datanode Me
-        DataNode Me = new DataNode();   
+    	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
+        DataNode Me = new DataNode(port);   
         
         //spawn off block report thread
         Me.BlockReportLoop();
         
         //connect with rmi registry
         try {
-        	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
             // create the URL to contact the rmiregistry
             String url = "//localhost:" + port + "/DataNode";
             System.out.println("binding " + url);
