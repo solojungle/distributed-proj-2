@@ -35,6 +35,7 @@ public class DataNode implements IDataNode
     public DataNode()
     {
     	//initialize values
+    	int id = -1;
     	InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();
@@ -56,7 +57,7 @@ public class DataNode implements IDataNode
 		}
     	
     	//load chunks list into memory
-    	MyDir = "DataNode" + MyIP;
+    	MyDir = "DataNode" + MyIP + ":" +MyPort;
     	File dir = new File(MyDir);
     	dir.mkdir(); //make directory if doesn't exist
 		String[] files = dir.list();
