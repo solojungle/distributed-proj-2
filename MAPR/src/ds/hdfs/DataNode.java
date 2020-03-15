@@ -56,7 +56,7 @@ public class DataNode implements IDataNode
 		}
     	
     	//load chunks list into memory
-    	//TODO: assign IDs
+    	MyDir = "DataNode" + MyIP;
     	File dir = new File(MyDir);
     	dir.mkdir(); //make directory if doesn't exist
 		String[] files = dir.list();
