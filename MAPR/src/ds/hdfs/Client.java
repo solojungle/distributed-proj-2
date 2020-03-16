@@ -140,21 +140,19 @@ public class Client
 	    	
 			//loop through each location of the given chunk until DN successfully returns bytes
 			WriteBlockResponse response = null;
-			int i = 0;
-			do {
-				DataNodeInfo d = list.get(i);
+			for(DataNodeInfo d: list) {
 				IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
 				try {
 					byte[] b = dataNode.writeBlock(r);  //make request
 					response = WriteBlockResponse.parseFrom(b);
+					if(response.getStatus()==false) {
+						System.out.println("Write failed: error contacting dataNode: "+d.getName());
+						return;
+					}
 				} catch (Exception e) {
-					System.out.println("error contacting dataNode: "+d.getName());
+					System.out.println("Write failed: error contacting dataNode: "+d.getName());
+					return;
 				}
-				
-			} while(i++ < list.size() && response.getStatus()==false);
-			if(response.getStatus()==false) { //all failed to write
-				System.out.println("error: failed to write file");
-				return;
 			}
 			chunkNum++;
 		}
