@@ -19,7 +19,7 @@ import ds.hdfs.Proto_Defn.ReadBlockResponse;
 import ds.hdfs.Proto_Defn.WriteBlockRequest;
 import ds.hdfs.Proto_Defn.WriteBlockResponse;;
 
-public class DataNode implements IDataNode
+public class DataNode extends UnicastRemoteObject implements IDataNode 
 {
     //protected String MyChunksFile;
     protected INameNode NNStub;
@@ -31,7 +31,7 @@ public class DataNode implements IDataNode
     private String MyDir;
     private TreeSet<String> MyChunks;
     
-    public DataNode(int port)
+    public DataNode(int port) throws RemoteException 
     {
     	//initialize values
     	MyID = -1;
