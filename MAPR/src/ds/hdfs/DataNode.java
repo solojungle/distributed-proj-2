@@ -94,18 +94,21 @@ public class DataNode implements IDataNode
 
     public byte[] readBlock(byte[] input)
     {
+    	//read request
         ReadBlockResponse.Builder response = ReadBlockResponse.newBuilder();
         try
         {
         ReadBlockRequest r = ReadBlockRequest.parseFrom(input);
     	String fileName = r.getChunkName();
         
+    	//check if has file
         if(!MyChunks.contains(fileName)) {
         	 System.out.println("Error: "+ fileName + " not found");
              response.setStatus(false);
              return response.build().toByteArray();
         }
         
+        //read and send bytes
     	String path = MyDir + fileName;
        	byte[] bytes = Files.readAllBytes(Paths.get(path));
        	response.setBytes(ByteString.copyFrom(bytes));
@@ -123,16 +126,19 @@ public class DataNode implements IDataNode
     public byte[] writeBlock(byte[] input)
     {
 
+    	//read request
 		WriteBlockResponse.Builder response = WriteBlockResponse.newBuilder();
         try
         {
         	WriteBlockRequest w = WriteBlockRequest.parseFrom(input);
     		String fileName = w.getChunkName();
     		
+    		//write bytes to file
         	FileOutputStream output = new FileOutputStream(fileName, false);
             output.write(w.getBytes().toByteArray());
             output.close();
             
+            //add to list of chunks
             MyChunks.add(fileName);
             
             response.setStatus(true);

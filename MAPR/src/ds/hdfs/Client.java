@@ -29,6 +29,7 @@ public class Client
     public IDataNode DNStub; //Data Node stub
     public Client()
     {
+    	//contact nameNode based off of info in config file
     	try {
 			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
@@ -71,6 +72,8 @@ public class Client
 
     public void PutFile(String fileName) //Put File
     {
+    	
+    	//open file
         System.out.println("Going to put file" + fileName);
         BufferedInputStream bis;
         try{
@@ -86,6 +89,7 @@ public class Client
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
+    	//send request
     	byte[] NNresponse;
     	ReturnChunkLocations fileList;
     	int blockSize;
