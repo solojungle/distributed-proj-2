@@ -228,9 +228,6 @@ public class DataNode implements IDataNode
     	int port = Integer.parseInt(args[0]); //get port no from first cmd arg
         DataNode Me = new DataNode(port);   
         
-        //spawn off block report thread
-        Me.BlockReportLoop();
-        
         //connect with rmi registry
         try {
             // create the URL to contact the rmiregistry
@@ -241,6 +238,9 @@ public class DataNode implements IDataNode
             Naming.rebind(url, Me);
 
             System.out.println("dataNode " + url + " is running...");
+            
+            //spawn off block report thread
+            Me.BlockReportLoop();
         }
         catch (Exception e) {
             System.out.println("dataNode failed:" + e.getMessage());
