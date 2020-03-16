@@ -163,6 +163,25 @@ public class Client
 
     public void GetFile(String fileName)
     {   
+    	
+    	File f = new File(fileName);
+    	boolean exists = f.exists();
+    	if(exists) {
+    		System.out.println("Warning: '"+ fileName +"' will be overwritten. Continue? [y/n]");
+    		Scanner in = new Scanner(System.in);
+    		String answer = in.nextLine().trim().toLowerCase();
+    		while (true) {
+    		  if (answer.equals("y")) {
+    		    f.delete();
+    		    break;
+    		  } 
+    		  else if (answer.equals("n")) {
+    			System.out.println("Aborting get operation");
+    		    return;
+    		  }
+    		}
+    	}
+    	
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
