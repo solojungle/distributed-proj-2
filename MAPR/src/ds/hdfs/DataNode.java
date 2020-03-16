@@ -1,4 +1,3 @@
-//Written By Shaleen Garg
 package ds.hdfs;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -45,27 +44,26 @@ public class DataNode implements IDataNode
         } catch (java.net.UnknownHostException e1) {
             e1.printStackTrace();
         }
-        
+      /*
     	//look up NameNode
     	try {
 			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
-			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
-			
-		} catch (Exception e) {
-			System.err.println("error reading nn_config.txt");
-			e.printStackTrace();
-		}
-    	
+			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));	
+	} catch (Exception e) {
+		System.err.println("error reading nn_config.txt");
+		e.printStackTrace();
+	}*/
     	//load chunks list into memory
-    	MyDir = "DataNode" + MyIP + ":" +MyPort;
+    	MyDir = "DataNode." + MyName + "." +MyPort;
+	System.out.println(MyDir);
     	File dir = new File(MyDir);
     	dir.mkdir(); //make directory if doesn't exist
-		String[] files = dir.list();
-		MyChunks = new TreeSet<String>();
-		for(String f: files) {
-			MyChunks.add(f);
-		}	
+	String[] files = dir.list();
+	MyChunks = new TreeSet<String>();
+	for(String f: files) {
+		MyChunks.add(f);
+	}	
     }
     
     
