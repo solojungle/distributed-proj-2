@@ -44,7 +44,7 @@ public class DataNode extends UnicastRemoteObject implements IDataNode
         } catch (java.net.UnknownHostException e1) {
             e1.printStackTrace();
         }
-      /*
+      
     	//look up NameNode
     	try {
 			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
@@ -53,9 +53,10 @@ public class DataNode extends UnicastRemoteObject implements IDataNode
 	} catch (Exception e) {
 		System.err.println("error reading nn_config.txt");
 		e.printStackTrace();
-	}*/
+	}
+
     	//load chunks list into memory
-    	MyDir = "DataNode." + MyName + "." +MyPort;
+    	MyDir = "DataNode." + MyName;
 	System.out.println(MyDir);
     	File dir = new File(MyDir);
     	dir.mkdir(); //make directory if doesn't exist
