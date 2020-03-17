@@ -4192,6 +4192,25 @@ public final class Proto_Defn {
      */
     com.google.protobuf.ByteString
         getFileNameBytes();
+
+    /**
+     * <pre>
+     *for PUT, file size in bytes (long)
+     * </pre>
+     *
+     * <code>optional int64 fileSize = 3;</code>
+     * @return Whether the fileSize field is set.
+     */
+    boolean hasFileSize();
+    /**
+     * <pre>
+     *for PUT, file size in bytes (long)
+     * </pre>
+     *
+     * <code>optional int64 fileSize = 3;</code>
+     * @return The fileSize.
+     */
+    long getFileSize();
   }
   /**
    * <pre>
@@ -4261,6 +4280,11 @@ public final class Proto_Defn {
               com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000002;
               fileName_ = bs;
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              fileSize_ = input.readInt64();
               break;
             }
             default: {
@@ -4465,6 +4489,31 @@ public final class Proto_Defn {
       }
     }
 
+    public static final int FILESIZE_FIELD_NUMBER = 3;
+    private long fileSize_;
+    /**
+     * <pre>
+     *for PUT, file size in bytes (long)
+     * </pre>
+     *
+     * <code>optional int64 fileSize = 3;</code>
+     * @return Whether the fileSize field is set.
+     */
+    public boolean hasFileSize() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <pre>
+     *for PUT, file size in bytes (long)
+     * </pre>
+     *
+     * <code>optional int64 fileSize = 3;</code>
+     * @return The fileSize.
+     */
+    public long getFileSize() {
+      return fileSize_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4489,6 +4538,9 @@ public final class Proto_Defn {
       if (((bitField0_ & 0x00000002) != 0)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileName_);
       }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeInt64(3, fileSize_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4504,6 +4556,10 @@ public final class Proto_Defn {
       }
       if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileName_);
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, fileSize_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4529,6 +4585,11 @@ public final class Proto_Defn {
         if (!getFileName()
             .equals(other.getFileName())) return false;
       }
+      if (hasFileSize() != other.hasFileSize()) return false;
+      if (hasFileSize()) {
+        if (getFileSize()
+            != other.getFileSize()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4547,6 +4608,11 @@ public final class Proto_Defn {
       if (hasFileName()) {
         hash = (37 * hash) + FILENAME_FIELD_NUMBER;
         hash = (53 * hash) + getFileName().hashCode();
+      }
+      if (hasFileSize()) {
+        hash = (37 * hash) + FILESIZE_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            getFileSize());
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -4689,6 +4755,8 @@ public final class Proto_Defn {
         bitField0_ = (bitField0_ & ~0x00000001);
         fileName_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
+        fileSize_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -4725,6 +4793,10 @@ public final class Proto_Defn {
           to_bitField0_ |= 0x00000002;
         }
         result.fileName_ = fileName_;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.fileSize_ = fileSize_;
+          to_bitField0_ |= 0x00000004;
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4781,6 +4853,9 @@ public final class Proto_Defn {
           bitField0_ |= 0x00000002;
           fileName_ = other.fileName_;
           onChanged();
+        }
+        if (other.hasFileSize()) {
+          setFileSize(other.getFileSize());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4937,6 +5012,59 @@ public final class Proto_Defn {
   }
   bitField0_ |= 0x00000002;
         fileName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long fileSize_ ;
+      /**
+       * <pre>
+       *for PUT, file size in bytes (long)
+       * </pre>
+       *
+       * <code>optional int64 fileSize = 3;</code>
+       * @return Whether the fileSize field is set.
+       */
+      public boolean hasFileSize() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <pre>
+       *for PUT, file size in bytes (long)
+       * </pre>
+       *
+       * <code>optional int64 fileSize = 3;</code>
+       * @return The fileSize.
+       */
+      public long getFileSize() {
+        return fileSize_;
+      }
+      /**
+       * <pre>
+       *for PUT, file size in bytes (long)
+       * </pre>
+       *
+       * <code>optional int64 fileSize = 3;</code>
+       * @param value The fileSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFileSize(long value) {
+        bitField0_ |= 0x00000004;
+        fileSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *for PUT, file size in bytes (long)
+       * </pre>
+       *
+       * <code>optional int64 fileSize = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFileSize() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        fileSize_ = 0L;
         onChanged();
         return this;
       }
@@ -6340,24 +6468,44 @@ public final class Proto_Defn {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     java.util.List<ds.hdfs.Proto_Defn.ChunkLocations> 
         getLocationsList();
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     ds.hdfs.Proto_Defn.ChunkLocations getLocations(int index);
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     int getLocationsCount();
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     java.util.List<? extends ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder> 
         getLocationsOrBuilderList();
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder getLocationsOrBuilder(
@@ -6365,7 +6513,7 @@ public final class Proto_Defn {
 
     /**
      * <pre>
-     *block size in GB for Put requests
+     *block size in Bytes
      * </pre>
      *
      * <code>optional int32 blockSize = 2;</code>
@@ -6374,7 +6522,7 @@ public final class Proto_Defn {
     boolean hasBlockSize();
     /**
      * <pre>
-     *block size in GB for Put requests
+     *block size in Bytes
      * </pre>
      *
      * <code>optional int32 blockSize = 2;</code>
@@ -6487,12 +6635,20 @@ public final class Proto_Defn {
     public static final int LOCATIONS_FIELD_NUMBER = 1;
     private java.util.List<ds.hdfs.Proto_Defn.ChunkLocations> locations_;
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     public java.util.List<ds.hdfs.Proto_Defn.ChunkLocations> getLocationsList() {
       return locations_;
     }
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     public java.util.List<? extends ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder> 
@@ -6500,18 +6656,30 @@ public final class Proto_Defn {
       return locations_;
     }
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     public int getLocationsCount() {
       return locations_.size();
     }
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     public ds.hdfs.Proto_Defn.ChunkLocations getLocations(int index) {
       return locations_.get(index);
     }
     /**
+     * <pre>
+     *sorted by chunk number
+     * </pre>
+     *
      * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
      */
     public ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder getLocationsOrBuilder(
@@ -6523,7 +6691,7 @@ public final class Proto_Defn {
     private int blockSize_;
     /**
      * <pre>
-     *block size in GB for Put requests
+     *block size in Bytes
      * </pre>
      *
      * <code>optional int32 blockSize = 2;</code>
@@ -6534,7 +6702,7 @@ public final class Proto_Defn {
     }
     /**
      * <pre>
-     *block size in GB for Put requests
+     *block size in Bytes
      * </pre>
      *
      * <code>optional int32 blockSize = 2;</code>
@@ -6942,6 +7110,10 @@ public final class Proto_Defn {
           ds.hdfs.Proto_Defn.ChunkLocations, ds.hdfs.Proto_Defn.ChunkLocations.Builder, ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder> locationsBuilder_;
 
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public java.util.List<ds.hdfs.Proto_Defn.ChunkLocations> getLocationsList() {
@@ -6952,6 +7124,10 @@ public final class Proto_Defn {
         }
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public int getLocationsCount() {
@@ -6962,6 +7138,10 @@ public final class Proto_Defn {
         }
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public ds.hdfs.Proto_Defn.ChunkLocations getLocations(int index) {
@@ -6972,6 +7152,10 @@ public final class Proto_Defn {
         }
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder setLocations(
@@ -6989,6 +7173,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder setLocations(
@@ -7003,6 +7191,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder addLocations(ds.hdfs.Proto_Defn.ChunkLocations value) {
@@ -7019,6 +7211,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder addLocations(
@@ -7036,6 +7232,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder addLocations(
@@ -7050,6 +7250,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder addLocations(
@@ -7064,6 +7268,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder addAllLocations(
@@ -7079,6 +7287,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder clearLocations() {
@@ -7092,6 +7304,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public Builder removeLocations(int index) {
@@ -7105,6 +7321,10 @@ public final class Proto_Defn {
         return this;
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public ds.hdfs.Proto_Defn.ChunkLocations.Builder getLocationsBuilder(
@@ -7112,6 +7332,10 @@ public final class Proto_Defn {
         return getLocationsFieldBuilder().getBuilder(index);
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder getLocationsOrBuilder(
@@ -7122,6 +7346,10 @@ public final class Proto_Defn {
         }
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public java.util.List<? extends ds.hdfs.Proto_Defn.ChunkLocationsOrBuilder> 
@@ -7133,6 +7361,10 @@ public final class Proto_Defn {
         }
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public ds.hdfs.Proto_Defn.ChunkLocations.Builder addLocationsBuilder() {
@@ -7140,6 +7372,10 @@ public final class Proto_Defn {
             ds.hdfs.Proto_Defn.ChunkLocations.getDefaultInstance());
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public ds.hdfs.Proto_Defn.ChunkLocations.Builder addLocationsBuilder(
@@ -7148,6 +7384,10 @@ public final class Proto_Defn {
             index, ds.hdfs.Proto_Defn.ChunkLocations.getDefaultInstance());
       }
       /**
+       * <pre>
+       *sorted by chunk number
+       * </pre>
+       *
        * <code>repeated .hdfs.ChunkLocations locations = 1;</code>
        */
       public java.util.List<ds.hdfs.Proto_Defn.ChunkLocations.Builder> 
@@ -7172,7 +7412,7 @@ public final class Proto_Defn {
       private int blockSize_ ;
       /**
        * <pre>
-       *block size in GB for Put requests
+       *block size in Bytes
        * </pre>
        *
        * <code>optional int32 blockSize = 2;</code>
@@ -7183,7 +7423,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *block size in GB for Put requests
+       *block size in Bytes
        * </pre>
        *
        * <code>optional int32 blockSize = 2;</code>
@@ -7194,7 +7434,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *block size in GB for Put requests
+       *block size in Bytes
        * </pre>
        *
        * <code>optional int32 blockSize = 2;</code>
@@ -7209,7 +7449,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *block size in GB for Put requests
+       *block size in Bytes
        * </pre>
        *
        * <code>optional int32 blockSize = 2;</code>
@@ -7986,16 +8226,17 @@ public final class Proto_Defn {
       "(\0132\022.hdfs.DataNodeInfo\022\021\n\tchunkName\030\002 \003(" +
       "\t\"2\n\021ReadBlockResponse\022\016\n\006status\030\001 \002(\010\022\r" +
       "\n\005bytes\030\002 \002(\014\"$\n\022WriteBlockResponse\022\016\n\006s" +
-      "tatus\030\001 \002(\010\"\216\001\n\rClientRequest\022:\n\013request" +
+      "tatus\030\001 \002(\010\"\240\001\n\rClientRequest\022:\n\013request" +
       "Type\030\001 \002(\0162%.hdfs.ClientRequest.ClientRe" +
-      "questType\022\020\n\010fileName\030\002 \001(\t\"/\n\021ClientReq" +
-      "uestType\022\007\n\003GET\020\000\022\007\n\003PUT\020\001\022\010\n\004LIST\020\002\"%\n\020" +
-      "ReadBlockRequest\022\021\n\tchunkName\030\001 \002(\t\"5\n\021W" +
-      "riteBlockRequest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005b" +
-      "ytes\030\002 \002(\014\"R\n\024ReturnChunkLocations\022\'\n\tlo" +
-      "cations\030\001 \003(\0132\024.hdfs.ChunkLocations\022\021\n\tb" +
-      "lockSize\030\002 \001(\005\"\036\n\nListResult\022\020\n\010fileName" +
-      "\030\001 \003(\tB\025\n\007ds.hdfsB\nProto_Defn"
+      "questType\022\020\n\010fileName\030\002 \001(\t\022\020\n\010fileSize\030" +
+      "\003 \001(\003\"/\n\021ClientRequestType\022\007\n\003GET\020\000\022\007\n\003P" +
+      "UT\020\001\022\010\n\004LIST\020\002\"%\n\020ReadBlockRequest\022\021\n\tch" +
+      "unkName\030\001 \002(\t\"5\n\021WriteBlockRequest\022\021\n\tch" +
+      "unkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"R\n\024ReturnCh" +
+      "unkLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.C" +
+      "hunkLocations\022\021\n\tblockSize\030\002 \001(\005\"\036\n\nList" +
+      "Result\022\020\n\010fileName\030\001 \003(\tB\025\n\007ds.hdfsB\nPro" +
+      "to_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8036,7 +8277,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ClientRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ClientRequest_descriptor,
-        new java.lang.String[] { "RequestType", "FileName", });
+        new java.lang.String[] { "RequestType", "FileName", "FileSize", });
     internal_static_hdfs_ReadBlockRequest_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_hdfs_ReadBlockRequest_fieldAccessorTable = new

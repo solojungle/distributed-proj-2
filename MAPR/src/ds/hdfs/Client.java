@@ -82,11 +82,13 @@ public class Client
             System.out.println("File not found !!!");
             return;
         }
+        File file = new File(fileName);
         
         //contact nameNode
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	c.setRequestType(ClientRequest.ClientRequestType.PUT);
     	c.setFileName(fileName);
+    	c.setFileSize(file.length());
     	byte[] input = c.build().toByteArray();
     	
     	//send request
