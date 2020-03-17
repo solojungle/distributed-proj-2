@@ -9,6 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  * Creates an instance of the remote object implementation,
@@ -21,10 +22,11 @@ public class NameNode implements INameNode {
      *
      */
 
-    String ip;
-    String name;
-    int port;
-    HashMap<Integer, DataNode> servers = new HashMap<>();
+    String ip; // The ip address of the NameNode server
+    String name; // The given name
+    int port; // The port
+    HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
+    HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
 
     static protected Registry serverRegistry;
@@ -204,7 +206,7 @@ public class NameNode implements INameNode {
      */
     private void handleBlockReportInsert(DataNode n) {
         /* DataNode already exists, overwrite it's status and timestamp */
-        if (servers.containsKey(n.id)) {
+        if (this.servers.containsKey(n.id)) {
             DataNode temp = new DataNode(n.ip, n.port, n.sname, n.id);
             servers.replace(temp.id, temp);
             return;
@@ -212,6 +214,24 @@ public class NameNode implements INameNode {
 
         /* New DataNode has made contact, insert into HashMap of DataNodes */
         servers.put(n.id, n);
+        return;
+    }
+
+    /**
+     *
+     * @param id
+     * @param chunks
+     */
+    private void handleChunkInsert(int id, TreeSet<String> chunks) {
+        /* Checking GLOBAL chunks HashMap for the existence of DataNode id */
+        if (this.chunks.containsKey(id)) {
+            /* Replace old chunks with new */
+            this.chunks.replace(id, chunks);
+            return;
+        }
+
+        /* Insert new chunks into HashMap */
+        this.chunks.put(id, chunks);
         return;
     }
 
@@ -240,13 +260,20 @@ public class NameNode implements INameNode {
             /* Create DataNode instance to insert into list */
             DataNode temp = new DataNode(address, port, name, id);
 
-            /* Insert/refresh DataNode in HashMap */
+            /* Insert new DataNode into HashMap, or recreate DataNode with a new timestampz */
             handleBlockReportInsert(temp);
 
-//            b.setDataNodeInfo(d);
-//            for(String f: MyChunks) {
-//                b.addChunkName(f);
-//            }
+            /* Instantiate TreeSet to hold chunks */
+            TreeSet<String> dn_chunks = new TreeSet<>();
+
+            /* Loop through chunks in BlockReport */
+            for (String chunk : b.getChunkNameList() ) {
+                dn_chunks.add(chunk);
+            }
+
+            /* Insert DataNode chunks into the HashMap */
+            handleChunkInsert(temp.id, dn_chunks);
+
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
