@@ -2,14 +2,15 @@ package ds.hdfs;
 
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Creates an instance of the remote object implementation,
@@ -25,6 +26,7 @@ public class NameNode implements INameNode {
     String ip; // The ip address of the NameNode server
     String name; // The given name
     int port; // The port
+    static long blocksize = -1; // BlockSize of chunks
     HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
     HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
@@ -53,6 +55,12 @@ public class NameNode implements INameNode {
     public static void main(String[] args) throws InterruptedException, NumberFormatException, IOException {
         try {
 
+            /* Get all new-lines from the configuration file */
+            List<String> configuration = Files.readAllLines(Paths.get("MAPR/src/nn_config.txt").toAbsolutePath());
+            /* Pass them to handler function to setup config state */
+            handleConfigurationFile(configuration);
+
+            /* Initialize server registry for host machine (will not have to do this if `start rmiregistry`) */
             serverRegistry = LocateRegistry.createRegistry(1099);
 
             /* Create remote object that provides the service */
@@ -66,22 +74,56 @@ public class NameNode implements INameNode {
              * Sends invocations to the registry on server's local host on the default registry port of 1099.
              * */
             Registry registry = LocateRegistry.getRegistry();
-//            Registry registry = LocateRegistry.createRegistry(1099);
 
             /* Bind the remote object's stub in the registry. */
             registry.bind("NameNode", stub);
 
             System.out.println("NameNode server is running...");
 
-
-            System.out.println("Will check for server status on an interval of 3 secs...");
-
-//            System.out.println(Arrays.toString(registry.list()));
+            // Start timer
+//            System.out.println("Will check for server status on an interval of 3 secs...");
 
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
+    }
+
+
+    private static void handleConfigurationFile(List<String> config) {
+
+        for (int i = 0; i < config.size(); i += 1) {
+            String line = config.get(i);
+            String[] fields = line.split("=");
+
+            if (fields.length < 2) {
+                System.out.println("Configuration format should be: `<attribute>=<value>`");
+                continue;
+            }
+
+            switch (fields[0]) {
+                case "ip":
+                    break;
+                case "port":
+                    break;
+                case "blocksize":
+                    blocksize = Long.valueOf(fields[1]);
+                    break;
+                default: System.out.println("Configuration attribute isn't recognized");
+            }
+        }
+    }
+
+    private long getBlockSize() throws RemoteException {
+        if (blocksize < 1) {
+            throw new RemoteException("Blocksize variable was not set correctly in NameNode configuration");
+        }
+
+        return blocksize;
+    }
+
+    private long calculateChunkAmount(long filesize, long blocksize) {
+        return (long)Math.ceil((double)filesize / blocksize);
     }
 
     /**
@@ -146,15 +188,26 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
-
+        /* Prepare response for Client */
         Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
 
         try {
+            /* Get the ClientRequest */
+            Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
+
+            /* Pull filename, filesize, and request type from message */
+            Proto_Defn.ClientRequest.ClientRequestType type = request.getRequestType();
+            String filename = request.getFileName();
+            long filesize = request.getFileSize();
+            long chunksize = getBlockSize();
+            long number_of_chunks = calculateChunkAmount(filesize, chunksize);
+
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
             e.printStackTrace();
             response.setStatus(-1);
         }
+
         return response.build().toByteArray();
     }
 
@@ -197,7 +250,6 @@ public class NameNode implements INameNode {
         }
         return response.build().toByteArray();
     }
-
 
     /**
      * Handles the insertion of DataNodes, will "refresh" the timestampz and status if server already exists
@@ -248,10 +300,10 @@ public class NameNode implements INameNode {
 
         try {
             /* Get the BlockReport */
-            Proto_Defn.BlockReport b = Proto_Defn.BlockReport.parseFrom(inp);
+            Proto_Defn.BlockReport request = Proto_Defn.BlockReport.parseFrom(inp);
 
             /* Pull DataNodeInfo from message */
-            Proto_Defn.DataNodeInfo info = b.getDataNodeInfo();
+            Proto_Defn.DataNodeInfo info = request.getDataNodeInfo();
             String address = info.getIp();
             String name = info.getName();
             int id = info.getId();
@@ -267,7 +319,7 @@ public class NameNode implements INameNode {
             TreeSet<String> dn_chunks = new TreeSet<>();
 
             /* Loop through chunks in BlockReport */
-            for (String chunk : b.getChunkNameList() ) {
+            for (String chunk : request.getChunkNameList() ) {
                 dn_chunks.add(chunk);
             }
 
