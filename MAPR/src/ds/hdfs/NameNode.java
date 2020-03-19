@@ -1,6 +1,9 @@
 package ds.hdfs;
 
 
+import com.sun.source.tree.Tree;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -123,7 +126,15 @@ public class NameNode implements INameNode {
     }
 
     private long calculateChunkAmount(long filesize, long blocksize) {
-        return (long)Math.ceil((double)filesize / blocksize);
+        /* Chunks can only be whole numbers not fractions, so we need to round up */
+        long size = (long)Math.ceil((double)filesize / blocksize);
+
+        /* If file is empty create a single chunk */
+        if (size == 0) {
+            size = 1;
+        }
+
+        return size;
     }
 
     /**
@@ -192,15 +203,7 @@ public class NameNode implements INameNode {
         Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
 
         try {
-            /* Get the ClientRequest */
-            Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
 
-            /* Pull filename, filesize, and request type from message */
-            Proto_Defn.ClientRequest.ClientRequestType type = request.getRequestType();
-            String filename = request.getFileName();
-            long filesize = request.getFileSize();
-            long chunksize = getBlockSize();
-            long number_of_chunks = calculateChunkAmount(filesize, chunksize);
 
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -217,10 +220,36 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
-
+        /* Prepare response for Client */
         Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
 
         try {
+            /* Get the ClientRequest */
+            Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
+
+            /* Get filename, filesize, and request type from message */
+            Proto_Defn.ClientRequest.ClientRequestType type = request.getRequestType();
+            String filename = request.getFileName();
+            long filesize = request.getFileSize();
+
+            /* Get chunksize from nn_config.txt */
+            long chunksize = getBlockSize();
+
+            /* Calculate the total number of chunks to create */
+            long number_of_chunks = calculateChunkAmount(filesize, chunksize);
+
+            /* Create the chunk names that will be distributed to DataNodes */
+            TreeSet<String> dn_chunk_names = new TreeSet<>();
+            for (int i = 0; i < number_of_chunks; i += 1) {
+                dn_chunk_names.add(filename + ":" + chunksize + ":" + i + ":" + new Date());
+            }
+
+            File file = new File("nn_files.json");
+
+
+            // Create .json file of all chunks of files
+
+
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
             e.printStackTrace();
