@@ -2,9 +2,12 @@ package ds.hdfs;
 
 
 import com.sun.source.tree.Tree;
+import netscape.javascript.JSObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +18,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+
 /**
  * Creates an instance of the remote object implementation,
  * Exports the remote object,
@@ -23,18 +27,17 @@ import java.util.*;
 public class NameNode implements INameNode {
 
     /**
-     *
+     * Global variables
      */
-
+    static protected Registry serverRegistry; // Might be unneeded
+    static final String CONFIG_PATH = "MAPR/src/nn_config.txt"; // Path to configuration file
+    static final String STORAGE_PATH = "MAPR/src/nn_files.json"; // Path to file storage
+    static long blocksize = -1; // BlockSize of chunks
+    int port; // The port
     String ip; // The ip address of the NameNode server
     String name; // The given name
-    int port; // The port
-    static long blocksize = -1; // BlockSize of chunks
     HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
     HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
-
-
-    static protected Registry serverRegistry;
 
     /**
      * @param addr
@@ -57,11 +60,22 @@ public class NameNode implements INameNode {
      */
     public static void main(String[] args) throws InterruptedException, NumberFormatException, IOException {
         try {
-
             /* Get all new-lines from the configuration file */
-            List<String> configuration = Files.readAllLines(Paths.get("MAPR/src/nn_config.txt").toAbsolutePath());
+            List<String> configuration = Files.readAllLines(Paths.get(CONFIG_PATH).toAbsolutePath());
+
             /* Pass them to handler function to setup config state */
             handleConfigurationFile(configuration);
+
+            /* Make sure a file exists where we can persist the filenames */
+            File file = new File(STORAGE_PATH);
+            if(file.createNewFile()) {
+                FileWriter fw = new FileWriter(STORAGE_PATH);
+                fw.write("[]");
+                fw.close();
+                System.out.println("Created file storage...");
+            }
+
+            System.out.println(readJSONFile(STORAGE_PATH));
 
             /* Initialize server registry for host machine (will not have to do this if `start rmiregistry`) */
             serverRegistry = LocateRegistry.createRegistry(1099);
@@ -84,7 +98,7 @@ public class NameNode implements INameNode {
             System.out.println("NameNode server is running...");
 
             // Start timer
-//            System.out.println("Will check for server status on an interval of 3 secs...");
+            // System.out.println("Will check for server status on an interval of 3 secs...");
 
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
@@ -205,6 +219,21 @@ public class NameNode implements INameNode {
         try {
 
 
+//
+//            FileReader r = new FileReader("MAPR/src/nn_files.json");
+//            JSONParser parser = new JSONParser();
+//            Object obja = parser.parse(new FileReader("MAPR/src/nn_files.json"));
+//            JSONObject jsonObject = (JSONObject) obja;
+//            JSONArray companyList = (JSONArray) jsonObject.get("Company List");
+//            Iterator<JSONObject> iterator = companyList.iterator();
+//            while (iterator.hasNext()) {
+//                System.out.println(iterator.next());
+//            }
+//
+
+
+
+
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
             e.printStackTrace();
@@ -239,16 +268,32 @@ public class NameNode implements INameNode {
             long number_of_chunks = calculateChunkAmount(filesize, chunksize);
 
             /* Create the chunk names that will be distributed to DataNodes */
-            TreeSet<String> dn_chunk_names = new TreeSet<>();
+            // TreeSet<String> dn_chunk_names = new TreeSet<>(); ???
+            JSONArray dn_chunk_names = new JSONArray();
             for (int i = 0; i < number_of_chunks; i += 1) {
                 dn_chunk_names.add(filename + ":" + chunksize + ":" + i + ":" + new Date());
             }
 
-            File file = new File("nn_files.json");
 
 
-            // Create .json file of all chunks of files
 
+
+            /* Open storage file */
+            FileWriter fw = new FileWriter(STORAGE_PATH);
+
+            /* Create JSON object to write to file */
+            JSONObject file = new JSONObject();
+
+            /* Add file headers */
+            file.put("name", filename);
+            file.put("size", filesize);
+            file.put("handle", 0);
+
+            /* Add chunks to JSON object */
+            file.put("chunks", dn_chunk_names);
+
+            /* Place JSON in file */
+            fw.write(file.toJSONString());
 
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
@@ -258,6 +303,66 @@ public class NameNode implements INameNode {
 
         return response.build().toByteArray();
     }
+
+
+    private void appendJSONFile(String path, JSONArray arr) throws  FileNotFoundException {
+        try {
+            /* Place storage file in a JSON array */
+            JSONArray old = readJSONFile(path);
+
+            /* Concat with the given array */
+            JSONArray file = concatArray(old, arr);
+
+            /* Write new JSON array to file */
+            writeJSONFile(path, file);
+        } catch (Exception e) {
+            System.err.println("Error at readJSONFile " + e.toString());
+            e.printStackTrace();
+        }
+
+        return;
+    }
+
+    private void writeJSONFile(String path, JSONArray arr) throws  FileNotFoundException {
+        try {
+            /* Open storage file */
+            FileWriter fw = new FileWriter(path);
+
+            /* Place JSON in file */
+            fw.write(arr.toJSONString());
+        } catch (Exception e) {
+            System.err.println("Error at readJSONFile " + e.toString());
+            e.printStackTrace();
+        }
+
+        return;
+    }
+
+    // REMOVE STATIC LATER
+    private static JSONArray readJSONFile(String path) throws FileNotFoundException {
+        JSONArray json = new JSONArray();
+        try {
+            JSONParser parser = new JSONParser();
+            json = (JSONArray)parser.parse(new FileReader(path));
+        } catch (Exception e) {
+            System.err.println("Error at readJSONFile " + e.toString());
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
+    private JSONArray concatArray(JSONArray arr1, JSONArray arr2) {
+        JSONArray result = new JSONArray();
+        for (int i = 0; i < arr1.size(); i++) {
+            result.add(arr1.get(i));
+        }
+        for (int i = 0; i < arr2.size(); i++) {
+            result.add(arr2.get(i));
+        }
+        return result;
+    }
+
 
     /**
      * @param inp
