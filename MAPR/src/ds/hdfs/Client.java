@@ -97,6 +97,10 @@ public class Client
 		try {
 			NNresponse = NNStub.assignBlock(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 			blockSize = fileList.getBlockSize();
 		} catch (Exception e) {
 			System.out.println("Error contacting nameNode");
@@ -192,6 +196,10 @@ public class Client
 		try {
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 		} catch (Exception e1) {
 			System.out.println("Error contacting nameNode");
 			e1.printStackTrace();
