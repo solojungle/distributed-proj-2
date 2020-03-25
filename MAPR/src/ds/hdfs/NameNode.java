@@ -229,52 +229,7 @@ public class NameNode implements INameNode {
                 throw new Error("error: given file does not exist");
             }
 
-
-            createBlockLocationResponse(file_object);
-
-            /* Get chunks from file */
-//            Object x = file_object.get("chunks");
-
-
-
-
-            /* Get online server */
-//            TreeSet<Integer> online = getOnlineServers();
-
-            /* Online DataNodes in HashMap */
-//            HashMap<Integer, TreeSet<String>> online_chunks = getServerBlockReports(online);
-
-
-
-
-
-
-
-            // I need all the chunks from online
-            // need to find
-
-
-//
-//            /* Setup chunkloc */
-//            Proto_Defn.ChunkLocations.Builder chunkloc = Proto_Defn.ChunkLocations.newBuilder();
-//            chunkloc.setChunkName("");
-//
-//            /* Setup DataNode info */
-//            Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
-//            dninfo.setId(1);
-//            dninfo.setPort(1);
-//            dninfo.setIp("");
-//            dninfo.setName("");
-//
-//            response.setBlockSize((int) blocksize);
-//            response.setStatus(1);
-
-
-//            HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
-
-
-
-            // Expects DataNode info + chunk locations
+            response = createBlockLocationResponse(file_object);
 
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -286,37 +241,41 @@ public class NameNode implements INameNode {
     }
 
 
-    private byte[] createBlockLocationResponse(JSONObject file) {
+    private Proto_Defn.ReturnChunkLocations.Builder createBlockLocationResponse(JSONObject file) {
 
-        System.out.println("cBLR called");
+        Proto_Defn.ReturnChunkLocations.Builder resp = Proto_Defn.ReturnChunkLocations.newBuilder();
 
         TreeSet<Integer> online = getOnlineServers();
-
         JSONArray filelist = (JSONArray) file.get("chunks");
-
         for (Integer integer : online) {
-            /* Get set of chunks */
             TreeSet curr = chunks.get(integer);
-            for (Object o : filelist) {
+            for (Object chunkname : filelist) {
+                Proto_Defn.ChunkLocations.Builder chunklocations = Proto_Defn.ChunkLocations.newBuilder();
 
-                System.out.println(o.toString());
+                if (curr.contains(chunkname.toString())) {
 
-                System.out.println("=====");
+                    DataNode dn = servers.get(integer);
 
-                System.out.println(curr);
+                    Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
 
-                if (curr.contains(o.toString())) {
+                    dninfo.setName(dn.sname);
+                    dninfo.setIp(dn.ip);
+                    dninfo.setPort(dn.port);
+                    dninfo.setId(dn.id);
 
-                    // Add DN + Chunk to list
+                    chunklocations.addDataNodeInfo(dninfo);
+                    chunklocations.setChunkName(chunkname.toString());
 
+                    resp.addLocations(chunklocations);
 
-                    System.out.println("CONTAINS");
                 }
             }
         }
 
+        resp.setBlockSize((int) blocksize);
+        resp.setStatus(1);
 
-        return new byte[10];
+        return resp;
     }
 
     private TreeSet<Integer> getOnlineServers() {
