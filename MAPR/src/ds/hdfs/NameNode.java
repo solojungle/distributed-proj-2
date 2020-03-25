@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -75,8 +76,6 @@ public class NameNode implements INameNode {
                 System.out.println("Created file storage...");
             }
 
-            System.out.println(readJSONFile(STORAGE_PATH));
-
             /* Initialize server registry for host machine (will not have to do this if `start rmiregistry`) */
             serverRegistry = LocateRegistry.createRegistry(1099);
 
@@ -106,9 +105,7 @@ public class NameNode implements INameNode {
         }
     }
 
-
     private static void handleConfigurationFile(List<String> config) {
-
         for (int i = 0; i < config.size(); i += 1) {
             String line = config.get(i);
             String[] fields = line.split("=");
@@ -126,7 +123,9 @@ public class NameNode implements INameNode {
                 case "blocksize":
                     blocksize = Long.valueOf(fields[1]);
                     break;
-                default: System.out.println("Configuration attribute isn't recognized");
+                default:
+                    System.out.println("Configuration attribute isn't recognized");
+                    break;
             }
         }
     }
@@ -214,25 +213,68 @@ public class NameNode implements INameNode {
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
         /* Prepare response for Client */
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+        Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
         try {
+            /* Get the ClientRequest */
+            Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
+
+            /* Get filename, filesize, and request type from message */
+            String filename = request.getFileName();
+            long filesize = request.getFileSize();
+
+            /* Retrieve and store the JSONObject else throw */
+            JSONObject file_object = searchJSONFile(STORAGE_PATH, "name", filename);
+            if (file_object == null) {
+                throw new Error("error: given file does not exist");
+            }
+
+
+            createBlockLocationResponse(file_object);
+
+            /* Get chunks from file */
+//            Object x = file_object.get("chunks");
+
+
+
+
+            /* Get online server */
+//            TreeSet<Integer> online = getOnlineServers();
+
+            /* Online DataNodes in HashMap */
+//            HashMap<Integer, TreeSet<String>> online_chunks = getServerBlockReports(online);
+
+
+
+
+
+
+
+            // I need all the chunks from online
+            // need to find
 
 
 //
-//            FileReader r = new FileReader("MAPR/src/nn_files.json");
-//            JSONParser parser = new JSONParser();
-//            Object obja = parser.parse(new FileReader("MAPR/src/nn_files.json"));
-//            JSONObject jsonObject = (JSONObject) obja;
-//            JSONArray companyList = (JSONArray) jsonObject.get("Company List");
-//            Iterator<JSONObject> iterator = companyList.iterator();
-//            while (iterator.hasNext()) {
-//                System.out.println(iterator.next());
-//            }
+//            /* Setup chunkloc */
+//            Proto_Defn.ChunkLocations.Builder chunkloc = Proto_Defn.ChunkLocations.newBuilder();
+//            chunkloc.setChunkName("");
 //
+//            /* Setup DataNode info */
+//            Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
+//            dninfo.setId(1);
+//            dninfo.setPort(1);
+//            dninfo.setIp("");
+//            dninfo.setName("");
+//
+//            response.setBlockSize((int) blocksize);
+//            response.setStatus(1);
+
+
+//            HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
 
 
+            // Expects DataNode info + chunk locations
 
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -243,6 +285,71 @@ public class NameNode implements INameNode {
         return response.build().toByteArray();
     }
 
+
+    private byte[] createBlockLocationResponse(JSONObject file) {
+
+        System.out.println("cBLR called");
+
+        TreeSet<Integer> online = getOnlineServers();
+
+        JSONArray filelist = (JSONArray) file.get("chunks");
+
+        for (Integer integer : online) {
+            /* Get set of chunks */
+            TreeSet curr = chunks.get(integer);
+            for (Object o : filelist) {
+
+                System.out.println(o.toString());
+
+                System.out.println("=====");
+
+                System.out.println(curr);
+
+                if (curr.contains(o.toString())) {
+
+                    // Add DN + Chunk to list
+
+
+                    System.out.println("CONTAINS");
+                }
+            }
+        }
+
+
+        return new byte[10];
+    }
+
+    private TreeSet<Integer> getOnlineServers() {
+        /* Instantiate TreeSet*/
+        TreeSet<Integer> result = new TreeSet<>();
+
+        /* Create iterator */
+        Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
+        while(server.hasNext()) {
+            /* Get HashMap row*/
+            Map.Entry<Integer, DataNode> map_curr = server.next();
+
+            /* Get DataNode entry */
+            DataNode curr = map_curr.getValue();
+
+            /* Confirmed server is live */
+            if (curr.status) {
+                result.add(curr.id);
+            }
+        }
+
+        return result;
+    }
+
+//    private HashMap<Integer, TreeSet<String>> getServerBlockReports(TreeSet<Integer> list) {
+//        HashMap<Integer, TreeSet<String>> result = new HashMap<>();
+//        for (Integer integer : list) {
+//            result.put(integer, chunks.get(integer));
+//        }
+//
+//        return result;
+//    }
+
     /**
      * @param inp
      * @return
@@ -250,14 +357,13 @@ public class NameNode implements INameNode {
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
         /* Prepare response for Client */
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+        Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
         try {
             /* Get the ClientRequest */
             Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
 
             /* Get filename, filesize, and request type from message */
-            Proto_Defn.ClientRequest.ClientRequestType type = request.getRequestType();
             String filename = request.getFileName();
             long filesize = request.getFileSize();
 
@@ -271,29 +377,37 @@ public class NameNode implements INameNode {
             // TreeSet<String> dn_chunk_names = new TreeSet<>(); ???
             JSONArray dn_chunk_names = new JSONArray();
             for (int i = 0; i < number_of_chunks; i += 1) {
-                dn_chunk_names.add(filename + ":" + chunksize + ":" + i + ":" + new Date());
+                dn_chunk_names.add(filename + ":" + chunksize + ":" + i + ":" + new Date().toInstant().toEpochMilli());
             }
 
-
-
-
-
-            /* Open storage file */
-            FileWriter fw = new FileWriter(STORAGE_PATH);
-
             /* Create JSON object to write to file */
-            JSONObject file = new JSONObject();
+            JSONObject json = new JSONObject();
 
             /* Add file headers */
-            file.put("name", filename);
-            file.put("size", filesize);
-            file.put("handle", 0);
+            json.put("name", filename);
+            json.put("size", filesize);
+            json.put("handle", 0);
 
             /* Add chunks to JSON object */
-            file.put("chunks", dn_chunk_names);
+            json.put("chunks", dn_chunk_names);
 
-            /* Place JSON in file */
-            fw.write(file.toJSONString());
+            /* Create array to input into file */
+            JSONArray tmp = new JSONArray();
+            tmp.add(json);
+
+            /* Append JSON to storage file */
+            appendJSONFile(STORAGE_PATH, tmp);
+
+            /* Setup reponse */
+            response.setBlockSize((int)blocksize);
+
+            /* Add file chunks to response */
+            Iterator<String> item = dn_chunk_names.iterator();
+            while (item.hasNext()) {
+                Proto_Defn.ChunkLocations.Builder chunk = Proto_Defn.ChunkLocations.newBuilder();
+                chunk.setChunkName(item.next());
+                response.addLocations(chunk);
+            }
 
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
@@ -304,19 +418,46 @@ public class NameNode implements INameNode {
         return response.build().toByteArray();
     }
 
+    private JSONObject searchJSONFile(String path, String attr, String value) {
+        try {
+            /* Read storage file */
+            JSONArray storage = readJSONFile(path);
+
+            /* Iterate through files, check if given exists*/
+            Iterator<?> item = storage.iterator();
+            while (item.hasNext()) {
+                /* Get json from ArrayList */
+                JSONObject current = (JSONObject) item.next();
+
+                /* Check if provided a valid attribute */
+                Object attribute = current.get(attr);
+                if (attribute == null) {
+                    throw new Error("error: please enter a valid attribute");
+                }
+
+                /* Check if attribute matches given value */
+                if (attribute.equals(value)) {
+                    return current;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error at searchJSONFile " + e.toString());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     private void appendJSONFile(String path, JSONArray arr) throws  FileNotFoundException {
         try {
-            /* Place storage file in a JSON array */
+            /* Read storage file and place in a JSON array */
             JSONArray old = readJSONFile(path);
 
-            /* Concat with the given array */
-            JSONArray file = concatArray(old, arr);
+            /* Write new concat JSON array to file */
+            writeJSONFile(path, concatArray(old, arr));
 
-            /* Write new JSON array to file */
-            writeJSONFile(path, file);
         } catch (Exception e) {
-            System.err.println("Error at readJSONFile " + e.toString());
+            System.err.println("Error at appendJSONFile " + e.toString());
             e.printStackTrace();
         }
 
@@ -330,8 +471,11 @@ public class NameNode implements INameNode {
 
             /* Place JSON in file */
             fw.write(arr.toJSONString());
+
+            /* Close to save the write */
+            fw.close();
         } catch (Exception e) {
-            System.err.println("Error at readJSONFile " + e.toString());
+            System.err.println("Error at writeJSONFile " + e.toString());
             e.printStackTrace();
         }
 
@@ -339,11 +483,15 @@ public class NameNode implements INameNode {
     }
 
     // REMOVE STATIC LATER
-    private static JSONArray readJSONFile(String path) throws FileNotFoundException {
+    private JSONArray readJSONFile(String path) throws FileNotFoundException {
         JSONArray json = new JSONArray();
         try {
+            /* Instantiate the parser */
             JSONParser parser = new JSONParser();
+
+            /* Parse and return the storage file */
             json = (JSONArray)parser.parse(new FileReader(path));
+
         } catch (Exception e) {
             System.err.println("Error at readJSONFile " + e.toString());
             e.printStackTrace();
@@ -360,9 +508,9 @@ public class NameNode implements INameNode {
         for (int i = 0; i < arr2.size(); i++) {
             result.add(arr2.get(i));
         }
+
         return result;
     }
-
 
     /**
      * @param inp
@@ -370,9 +518,7 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] list(byte[] inp) throws RemoteException {
-
         Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
-
         try {
 
             System.out.println(new String(inp));
@@ -382,6 +528,7 @@ public class NameNode implements INameNode {
             e.printStackTrace();
             response.setStatus(-1);
         }
+
         return response.build().toByteArray();
     }
 
@@ -418,6 +565,7 @@ public class NameNode implements INameNode {
 
         /* Insert new chunks into HashMap */
         this.chunks.put(id, chunks);
+
         return;
     }
 
@@ -473,9 +621,9 @@ public class NameNode implements INameNode {
      *
      */
     public static class DataNode {
-        Date timestampz;
         String ip;
         String sname;
+        long timestampz;
         boolean status;
         int port;
         int id;
@@ -491,7 +639,7 @@ public class NameNode implements INameNode {
             this.port = port;
             this.sname = sname;
             this.id = id;
-            this.timestampz = new Date();
+            this.timestampz = new Date().toInstant().toEpochMilli();
             this.status = true;
         }
     }
