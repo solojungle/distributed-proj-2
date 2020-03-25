@@ -5,5 +5,5 @@ bash run.sh -c
 
 Run:
 bash run.sh -client
-bash run.sh -dataNode <port number>
+bash run.sh -dataNode <port number of RMI registry>
 bash run.sh -nameNode
