@@ -4166,28 +4166,17 @@ public final class Proto_Defn {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-     * @return Whether the requestType field is set.
-     */
-    boolean hasRequestType();
-    /**
-     * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-     * @return The requestType.
-     */
-    ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType getRequestType();
-
-    /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return Whether the fileName field is set.
      */
     boolean hasFileName();
     /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return The fileName.
      */
     java.lang.String getFileName();
     /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return The bytes for fileName.
      */
     com.google.protobuf.ByteString
@@ -4198,7 +4187,7 @@ public final class Proto_Defn {
      *for PUT, file size in bytes (long)
      * </pre>
      *
-     * <code>optional int64 fileSize = 3;</code>
+     * <code>optional int64 fileSize = 2;</code>
      * @return Whether the fileSize field is set.
      */
     boolean hasFileSize();
@@ -4207,7 +4196,7 @@ public final class Proto_Defn {
      *for PUT, file size in bytes (long)
      * </pre>
      *
-     * <code>optional int64 fileSize = 3;</code>
+     * <code>optional int64 fileSize = 2;</code>
      * @return The fileSize.
      */
     long getFileSize();
@@ -4229,7 +4218,6 @@ public final class Proto_Defn {
       super(builder);
     }
     private ClientRequest() {
-      requestType_ = 0;
       fileName_ = "";
     }
 
@@ -4264,26 +4252,14 @@ public final class Proto_Defn {
             case 0:
               done = true;
               break;
-            case 8: {
-              int rawValue = input.readEnum();
-                @SuppressWarnings("deprecation")
-              ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType value = ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(1, rawValue);
-              } else {
-                bitField0_ |= 0x00000001;
-                requestType_ = rawValue;
-              }
-              break;
-            }
-            case 18: {
+            case 10: {
               com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000002;
+              bitField0_ |= 0x00000001;
               fileName_ = bs;
               break;
             }
-            case 24: {
-              bitField0_ |= 0x00000004;
+            case 16: {
+              bitField0_ |= 0x00000002;
               fileSize_ = input.readInt64();
               break;
             }
@@ -4319,142 +4295,18 @@ public final class Proto_Defn {
               ds.hdfs.Proto_Defn.ClientRequest.class, ds.hdfs.Proto_Defn.ClientRequest.Builder.class);
     }
 
-    /**
-     * Protobuf enum {@code hdfs.ClientRequest.ClientRequestType}
-     */
-    public enum ClientRequestType
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>GET = 0;</code>
-       */
-      GET(0),
-      /**
-       * <code>PUT = 1;</code>
-       */
-      PUT(1),
-      /**
-       * <code>LIST = 2;</code>
-       */
-      LIST(2),
-      ;
-
-      /**
-       * <code>GET = 0;</code>
-       */
-      public static final int GET_VALUE = 0;
-      /**
-       * <code>PUT = 1;</code>
-       */
-      public static final int PUT_VALUE = 1;
-      /**
-       * <code>LIST = 2;</code>
-       */
-      public static final int LIST_VALUE = 2;
-
-
-      public final int getNumber() {
-        return value;
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static ClientRequestType valueOf(int value) {
-        return forNumber(value);
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       */
-      public static ClientRequestType forNumber(int value) {
-        switch (value) {
-          case 0: return GET;
-          case 1: return PUT;
-          case 2: return LIST;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<ClientRequestType>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static final com.google.protobuf.Internal.EnumLiteMap<
-          ClientRequestType> internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<ClientRequestType>() {
-              public ClientRequestType findValueByNumber(int number) {
-                return ClientRequestType.forNumber(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(ordinal());
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return ds.hdfs.Proto_Defn.ClientRequest.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final ClientRequestType[] VALUES = values();
-
-      public static ClientRequestType valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int value;
-
-      private ClientRequestType(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:hdfs.ClientRequest.ClientRequestType)
-    }
-
     private int bitField0_;
-    public static final int REQUESTTYPE_FIELD_NUMBER = 1;
-    private int requestType_;
-    /**
-     * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-     * @return Whether the requestType field is set.
-     */
-    public boolean hasRequestType() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-     * @return The requestType.
-     */
-    public ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType getRequestType() {
-      @SuppressWarnings("deprecation")
-      ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType result = ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType.valueOf(requestType_);
-      return result == null ? ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType.GET : result;
-    }
-
-    public static final int FILENAME_FIELD_NUMBER = 2;
+    public static final int FILENAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object fileName_;
     /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return Whether the fileName field is set.
      */
     public boolean hasFileName() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return The fileName.
      */
     public java.lang.String getFileName() {
@@ -4472,7 +4324,7 @@ public final class Proto_Defn {
       }
     }
     /**
-     * <code>optional string fileName = 2;</code>
+     * <code>optional string fileName = 1;</code>
      * @return The bytes for fileName.
      */
     public com.google.protobuf.ByteString
@@ -4489,25 +4341,25 @@ public final class Proto_Defn {
       }
     }
 
-    public static final int FILESIZE_FIELD_NUMBER = 3;
+    public static final int FILESIZE_FIELD_NUMBER = 2;
     private long fileSize_;
     /**
      * <pre>
      *for PUT, file size in bytes (long)
      * </pre>
      *
-     * <code>optional int64 fileSize = 3;</code>
+     * <code>optional int64 fileSize = 2;</code>
      * @return Whether the fileSize field is set.
      */
     public boolean hasFileSize() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <pre>
      *for PUT, file size in bytes (long)
      * </pre>
      *
-     * <code>optional int64 fileSize = 3;</code>
+     * <code>optional int64 fileSize = 2;</code>
      * @return The fileSize.
      */
     public long getFileSize() {
@@ -4521,10 +4373,6 @@ public final class Proto_Defn {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasRequestType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -4533,13 +4381,10 @@ public final class Proto_Defn {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (((bitField0_ & 0x00000001) != 0)) {
-        output.writeEnum(1, requestType_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_);
       }
       if (((bitField0_ & 0x00000002) != 0)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileName_);
-      }
-      if (((bitField0_ & 0x00000004) != 0)) {
-        output.writeInt64(3, fileSize_);
+        output.writeInt64(2, fileSize_);
       }
       unknownFields.writeTo(output);
     }
@@ -4551,15 +4396,11 @@ public final class Proto_Defn {
 
       size = 0;
       if (((bitField0_ & 0x00000001) != 0)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, requestType_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, fileName_);
       }
       if (((bitField0_ & 0x00000002) != 0)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileName_);
-      }
-      if (((bitField0_ & 0x00000004) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, fileSize_);
+          .computeInt64Size(2, fileSize_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4576,10 +4417,6 @@ public final class Proto_Defn {
       }
       ds.hdfs.Proto_Defn.ClientRequest other = (ds.hdfs.Proto_Defn.ClientRequest) obj;
 
-      if (hasRequestType() != other.hasRequestType()) return false;
-      if (hasRequestType()) {
-        if (requestType_ != other.requestType_) return false;
-      }
       if (hasFileName() != other.hasFileName()) return false;
       if (hasFileName()) {
         if (!getFileName()
@@ -4601,10 +4438,6 @@ public final class Proto_Defn {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasRequestType()) {
-        hash = (37 * hash) + REQUESTTYPE_FIELD_NUMBER;
-        hash = (53 * hash) + requestType_;
-      }
       if (hasFileName()) {
         hash = (37 * hash) + FILENAME_FIELD_NUMBER;
         hash = (53 * hash) + getFileName().hashCode();
@@ -4751,12 +4584,10 @@ public final class Proto_Defn {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        requestType_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
         fileName_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         fileSize_ = 0L;
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -4788,14 +4619,10 @@ public final class Proto_Defn {
         if (((from_bitField0_ & 0x00000001) != 0)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.requestType_ = requestType_;
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.fileName_ = fileName_;
-        if (((from_bitField0_ & 0x00000004) != 0)) {
+        if (((from_bitField0_ & 0x00000002) != 0)) {
           result.fileSize_ = fileSize_;
-          to_bitField0_ |= 0x00000004;
+          to_bitField0_ |= 0x00000002;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -4846,11 +4673,8 @@ public final class Proto_Defn {
 
       public Builder mergeFrom(ds.hdfs.Proto_Defn.ClientRequest other) {
         if (other == ds.hdfs.Proto_Defn.ClientRequest.getDefaultInstance()) return this;
-        if (other.hasRequestType()) {
-          setRequestType(other.getRequestType());
-        }
         if (other.hasFileName()) {
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
           fileName_ = other.fileName_;
           onChanged();
         }
@@ -4864,9 +4688,6 @@ public final class Proto_Defn {
 
       @java.lang.Override
       public final boolean isInitialized() {
-        if (!hasRequestType()) {
-          return false;
-        }
         return true;
       }
 
@@ -4890,58 +4711,16 @@ public final class Proto_Defn {
       }
       private int bitField0_;
 
-      private int requestType_ = 0;
-      /**
-       * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-       * @return Whether the requestType field is set.
-       */
-      public boolean hasRequestType() {
-        return ((bitField0_ & 0x00000001) != 0);
-      }
-      /**
-       * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-       * @return The requestType.
-       */
-      public ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType getRequestType() {
-        @SuppressWarnings("deprecation")
-        ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType result = ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType.valueOf(requestType_);
-        return result == null ? ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType.GET : result;
-      }
-      /**
-       * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-       * @param value The requestType to set.
-       * @return This builder for chaining.
-       */
-      public Builder setRequestType(ds.hdfs.Proto_Defn.ClientRequest.ClientRequestType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        bitField0_ |= 0x00000001;
-        requestType_ = value.getNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required .hdfs.ClientRequest.ClientRequestType requestType = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearRequestType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        requestType_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object fileName_ = "";
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @return Whether the fileName field is set.
        */
       public boolean hasFileName() {
-        return ((bitField0_ & 0x00000002) != 0);
+        return ((bitField0_ & 0x00000001) != 0);
       }
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @return The fileName.
        */
       public java.lang.String getFileName() {
@@ -4959,7 +4738,7 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @return The bytes for fileName.
        */
       public com.google.protobuf.ByteString
@@ -4976,7 +4755,7 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @param value The fileName to set.
        * @return This builder for chaining.
        */
@@ -4985,23 +4764,23 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         fileName_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearFileName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         fileName_ = getDefaultInstance().getFileName();
         onChanged();
         return this;
       }
       /**
-       * <code>optional string fileName = 2;</code>
+       * <code>optional string fileName = 1;</code>
        * @param value The bytes for fileName to set.
        * @return This builder for chaining.
        */
@@ -5010,7 +4789,7 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         fileName_ = value;
         onChanged();
         return this;
@@ -5022,18 +4801,18 @@ public final class Proto_Defn {
        *for PUT, file size in bytes (long)
        * </pre>
        *
-       * <code>optional int64 fileSize = 3;</code>
+       * <code>optional int64 fileSize = 2;</code>
        * @return Whether the fileSize field is set.
        */
       public boolean hasFileSize() {
-        return ((bitField0_ & 0x00000004) != 0);
+        return ((bitField0_ & 0x00000002) != 0);
       }
       /**
        * <pre>
        *for PUT, file size in bytes (long)
        * </pre>
        *
-       * <code>optional int64 fileSize = 3;</code>
+       * <code>optional int64 fileSize = 2;</code>
        * @return The fileSize.
        */
       public long getFileSize() {
@@ -5044,12 +4823,12 @@ public final class Proto_Defn {
        *for PUT, file size in bytes (long)
        * </pre>
        *
-       * <code>optional int64 fileSize = 3;</code>
+       * <code>optional int64 fileSize = 2;</code>
        * @param value The fileSize to set.
        * @return This builder for chaining.
        */
       public Builder setFileSize(long value) {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         fileSize_ = value;
         onChanged();
         return this;
@@ -5059,11 +4838,11 @@ public final class Proto_Defn {
        *for PUT, file size in bytes (long)
        * </pre>
        *
-       * <code>optional int64 fileSize = 3;</code>
+       * <code>optional int64 fileSize = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearFileSize() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         fileSize_ = 0L;
         onChanged();
         return this;
@@ -8226,17 +8005,14 @@ public final class Proto_Defn {
       "(\0132\022.hdfs.DataNodeInfo\022\021\n\tchunkName\030\002 \003(" +
       "\t\"2\n\021ReadBlockResponse\022\016\n\006status\030\001 \002(\010\022\r" +
       "\n\005bytes\030\002 \002(\014\"$\n\022WriteBlockResponse\022\016\n\006s" +
-      "tatus\030\001 \002(\010\"\240\001\n\rClientRequest\022:\n\013request" +
-      "Type\030\001 \002(\0162%.hdfs.ClientRequest.ClientRe" +
-      "questType\022\020\n\010fileName\030\002 \001(\t\022\020\n\010fileSize\030" +
-      "\003 \001(\003\"/\n\021ClientRequestType\022\007\n\003GET\020\000\022\007\n\003P" +
-      "UT\020\001\022\010\n\004LIST\020\002\"%\n\020ReadBlockRequest\022\021\n\tch" +
-      "unkName\030\001 \002(\t\"5\n\021WriteBlockRequest\022\021\n\tch" +
-      "unkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"R\n\024ReturnCh" +
-      "unkLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.C" +
-      "hunkLocations\022\021\n\tblockSize\030\002 \001(\005\"\036\n\nList" +
-      "Result\022\020\n\010fileName\030\001 \003(\tB\025\n\007ds.hdfsB\nPro" +
-      "to_Defn"
+      "tatus\030\001 \002(\010\"3\n\rClientRequest\022\020\n\010fileName" +
+      "\030\001 \001(\t\022\020\n\010fileSize\030\002 \001(\003\"%\n\020ReadBlockReq" +
+      "uest\022\021\n\tchunkName\030\001 \002(\t\"5\n\021WriteBlockReq" +
+      "uest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"R" +
+      "\n\024ReturnChunkLocations\022\'\n\tlocations\030\001 \003(" +
+      "\0132\024.hdfs.ChunkLocations\022\021\n\tblockSize\030\002 \001" +
+      "(\005\"\036\n\nListResult\022\020\n\010fileName\030\001 \003(\tB\025\n\007ds" +
+      ".hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8277,7 +8053,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ClientRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ClientRequest_descriptor,
-        new java.lang.String[] { "RequestType", "FileName", "FileSize", });
+        new java.lang.String[] { "FileName", "FileSize", });
     internal_static_hdfs_ReadBlockRequest_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_hdfs_ReadBlockRequest_fieldAccessorTable = new
