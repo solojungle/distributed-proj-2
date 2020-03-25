@@ -6308,6 +6308,25 @@ public final class Proto_Defn {
      * @return The blockSize.
      */
     int getBlockSize();
+
+    /**
+     * <pre>
+     *-1 for failure, 1 for success
+     * </pre>
+     *
+     * <code>required int32 status = 3;</code>
+     * @return Whether the status field is set.
+     */
+    boolean hasStatus();
+    /**
+     * <pre>
+     *-1 for failure, 1 for success
+     * </pre>
+     *
+     * <code>required int32 status = 3;</code>
+     * @return The status.
+     */
+    int getStatus();
   }
   /**
    * <pre>
@@ -6373,6 +6392,11 @@ public final class Proto_Defn {
             case 16: {
               bitField0_ |= 0x00000001;
               blockSize_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000002;
+              status_ = input.readInt32();
               break;
             }
             default: {
@@ -6491,6 +6515,31 @@ public final class Proto_Defn {
       return blockSize_;
     }
 
+    public static final int STATUS_FIELD_NUMBER = 3;
+    private int status_;
+    /**
+     * <pre>
+     *-1 for failure, 1 for success
+     * </pre>
+     *
+     * <code>required int32 status = 3;</code>
+     * @return Whether the status field is set.
+     */
+    public boolean hasStatus() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <pre>
+     *-1 for failure, 1 for success
+     * </pre>
+     *
+     * <code>required int32 status = 3;</code>
+     * @return The status.
+     */
+    public int getStatus() {
+      return status_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -6498,6 +6547,10 @@ public final class Proto_Defn {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasStatus()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       for (int i = 0; i < getLocationsCount(); i++) {
         if (!getLocations(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -6517,6 +6570,9 @@ public final class Proto_Defn {
       if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt32(2, blockSize_);
       }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeInt32(3, status_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6533,6 +6589,10 @@ public final class Proto_Defn {
       if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, blockSize_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, status_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6556,6 +6616,11 @@ public final class Proto_Defn {
         if (getBlockSize()
             != other.getBlockSize()) return false;
       }
+      if (hasStatus() != other.hasStatus()) return false;
+      if (hasStatus()) {
+        if (getStatus()
+            != other.getStatus()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6574,6 +6639,10 @@ public final class Proto_Defn {
       if (hasBlockSize()) {
         hash = (37 * hash) + BLOCKSIZE_FIELD_NUMBER;
         hash = (53 * hash) + getBlockSize();
+      }
+      if (hasStatus()) {
+        hash = (37 * hash) + STATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getStatus();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -6722,6 +6791,8 @@ public final class Proto_Defn {
         }
         blockSize_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
+        status_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -6762,6 +6833,10 @@ public final class Proto_Defn {
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.blockSize_ = blockSize_;
           to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.status_ = status_;
+          to_bitField0_ |= 0x00000002;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -6841,6 +6916,9 @@ public final class Proto_Defn {
         if (other.hasBlockSize()) {
           setBlockSize(other.getBlockSize());
         }
+        if (other.hasStatus()) {
+          setStatus(other.getStatus());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -6848,6 +6926,9 @@ public final class Proto_Defn {
 
       @java.lang.Override
       public final boolean isInitialized() {
+        if (!hasStatus()) {
+          return false;
+        }
         for (int i = 0; i < getLocationsCount(); i++) {
           if (!getLocations(i).isInitialized()) {
             return false;
@@ -7237,6 +7318,59 @@ public final class Proto_Defn {
       public Builder clearBlockSize() {
         bitField0_ = (bitField0_ & ~0x00000002);
         blockSize_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int status_ ;
+      /**
+       * <pre>
+       *-1 for failure, 1 for success
+       * </pre>
+       *
+       * <code>required int32 status = 3;</code>
+       * @return Whether the status field is set.
+       */
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       * <pre>
+       *-1 for failure, 1 for success
+       * </pre>
+       *
+       * <code>required int32 status = 3;</code>
+       * @return The status.
+       */
+      public int getStatus() {
+        return status_;
+      }
+      /**
+       * <pre>
+       *-1 for failure, 1 for success
+       * </pre>
+       *
+       * <code>required int32 status = 3;</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(int value) {
+        bitField0_ |= 0x00000004;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *-1 for failure, 1 for success
+       * </pre>
+       *
+       * <code>required int32 status = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        status_ = 0;
         onChanged();
         return this;
       }
@@ -8008,11 +8142,11 @@ public final class Proto_Defn {
       "tatus\030\001 \002(\010\"3\n\rClientRequest\022\020\n\010fileName" +
       "\030\001 \001(\t\022\020\n\010fileSize\030\002 \001(\003\"%\n\020ReadBlockReq" +
       "uest\022\021\n\tchunkName\030\001 \002(\t\"5\n\021WriteBlockReq" +
-      "uest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"R" +
+      "uest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"b" +
       "\n\024ReturnChunkLocations\022\'\n\tlocations\030\001 \003(" +
       "\0132\024.hdfs.ChunkLocations\022\021\n\tblockSize\030\002 \001" +
-      "(\005\"\036\n\nListResult\022\020\n\010fileName\030\001 \003(\tB\025\n\007ds" +
-      ".hdfsB\nProto_Defn"
+      "(\005\022\016\n\006status\030\003 \002(\005\"\036\n\nListResult\022\020\n\010file" +
+      "Name\030\001 \003(\tB\025\n\007ds.hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8071,7 +8205,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ReturnChunkLocations_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ReturnChunkLocations_descriptor,
-        new java.lang.String[] { "Locations", "BlockSize", });
+        new java.lang.String[] { "Locations", "BlockSize", "Status", });
     internal_static_hdfs_ListResult_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_hdfs_ListResult_fieldAccessorTable = new
