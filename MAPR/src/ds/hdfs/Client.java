@@ -2,10 +2,7 @@ package ds.hdfs;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -32,6 +29,7 @@ public class Client
     public IDataNode DNStub; //Data Node stub
     public Client()
     {
+    	//contact nameNode based off of info in config file
     	try {
 			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
@@ -74,6 +72,8 @@ public class Client
 
     public void PutFile(String fileName) //Put File
     {
+    	
+    	//open file
         System.out.println("Going to put file" + fileName);
         BufferedInputStream bis;
         try{
@@ -82,19 +82,25 @@ public class Client
             System.out.println("File not found !!!");
             return;
         }
+        File file = new File(fileName);
         
         //contact nameNode
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.PUT);
     	c.setFileName(fileName);
+    	c.setFileSize(file.length());
     	byte[] input = c.build().toByteArray();
     	
+    	//send request
     	byte[] NNresponse;
     	ReturnChunkLocations fileList;
     	int blockSize;
 		try {
-			NNresponse = NNStub.getBlockLocations(input);
+			NNresponse = NNStub.assignBlock(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 			blockSize = fileList.getBlockSize();
 		} catch (Exception e) {
 			System.out.println("Error contacting nameNode");
@@ -139,21 +145,17 @@ public class Client
 	    	
 			//loop through each location of the given chunk until DN successfully returns bytes
 			WriteBlockResponse response = null;
-			
 			for(DataNodeInfo d: list) {
-				int i = 0;
-				do {
-					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
-					try {
-						byte[] b = dataNode.writeBlock(r);  //make request
-						response = WriteBlockResponse.parseFrom(b);
-					} catch (Exception e) {
-						System.out.println("error contacting dataNode: "+d.toString());
+				IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
+				try {
+					byte[] b = dataNode.writeBlock(r);  //make request
+					response = WriteBlockResponse.parseFrom(b);
+					if(response.getStatus()==false) {
+						System.out.println("Write failed: error contacting dataNode: "+d.getName());
+						return;
 					}
-					
-				} while(i++ < list.size() && response.getStatus()==false);
-				if(i >= list.size()) { //all failed to write
-					System.out.println("error: failed to write file");
+				} catch (Exception e) {
+					System.out.println("Write failed: error contacting dataNode: "+d.getName());
 					return;
 				}
 			}
@@ -163,17 +165,41 @@ public class Client
 
     public void GetFile(String fileName)
     {   
+    	
+    	//check if file already exists and give warning if so
+    	File f = new File(fileName);
+    	boolean exists = f.exists();
+    	if(exists) {
+    		System.out.println("Warning: '"+ fileName +"' will be overwritten. Continue? [y/n]");
+    		Scanner in = new Scanner(System.in);
+    		String answer = in.nextLine().trim().toLowerCase();
+    		while (true) {
+    		  if (answer.equals("y")) {
+    		    f.delete();
+    		    break;
+    		  } 
+    		  else if (answer.equals("n")) {
+    			System.out.println("Aborting get operation");
+    		    return;
+    		  }
+    		}
+    	}
+    	
+    	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
-   
+    	//send request
 		byte[] NNresponse;
 		ReturnChunkLocations fileList;
 		try {
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 		} catch (Exception e1) {
 			System.out.println("Error contacting nameNode");
 			e1.printStackTrace();
@@ -187,33 +213,36 @@ public class Client
 		for(ChunkLocations l: locations) {
 			String chunkName = l.getChunkName();
 			List <DataNodeInfo> list = l.getDataNodeInfoList();
-			for(DataNodeInfo d: list) {
-				int i = 0;
-				//build request to DN
-				ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
-		    	DNrequest.setChunkName(chunkName);
-		    	byte[] r = DNrequest.build().toByteArray();
-		    	
-				//loop through each location of the given chunk until DN successfully returns bytes
-				ReadBlockResponse response = null;
-				do {
-					IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
-					byte[] b;
-					try {
-						b = dataNode.readBlock(r);
-						response = ReadBlockResponse.parseFrom(b);
-					} catch (RemoteException | InvalidProtocolBufferException e) {
-						System.out.println("error contacting dataNode: "+d.toString());
-					}  
-					
-				} while(i++ < list.size() && response.getStatus()==false);
-				if(i >= list.size()) { //all failed to read
-					System.out.println("error: failed to retrieve file");
-					return;
-				}
-				streams.add(response.getBytes().toByteArray()); //store bytes in memory
+			
+			//build request to DN
+			ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
+	    	DNrequest.setChunkName(chunkName);
+	    	byte[] r = DNrequest.build().toByteArray();
+	    	
+			//loop through each location of the given chunk until DN successfully returns bytes
+			ReadBlockResponse response = null;
+			int i = 0;
+			do {
+				DataNodeInfo d = list.get(i);
+				IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
+				byte[] b;
+				try {
+					b = dataNode.readBlock(r);
+					response = ReadBlockResponse.parseFrom(b);
+				} catch (RemoteException | InvalidProtocolBufferException e) {
+					System.out.println("error contacting dataNode: "+d.getName());
+				}  
+				
+			} while(i++ < list.size() && response.getStatus()==false);
+			
+			if(response.getStatus()==false) { //all failed to read
+				System.out.println("error: failed to retrieve file");
+				return;
 			}
+			streams.add(response.getBytes().toByteArray()); //store bytes in memory
 		}
+		
+		//write file locally
 		FileOutputStream output;
 		try {
 			output = new FileOutputStream(fileName, true);
@@ -230,10 +259,12 @@ public class Client
 
     public void List()
     {	
+    	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.LIST);
     	ClientRequest r = c.build();
     	byte[] input = r.toByteArray();
+    	
+    	//print results
     	try {
     		byte[] resultBytes = NNStub.list(input);
     		ListResult fileList = ListResult.parseFrom(resultBytes);
@@ -266,7 +297,8 @@ public class Client
             {
                 System.out.println("The following are the Supported Commands");
                 System.out.println("1. put filename ## To put a file in HDFS");
-                System.out.println("2. get filename ## To get a file in HDFS"); System.out.println("2. list ## To get the list of files in HDFS");
+                System.out.println("2. get filename ## To get a file in HDFS"); 
+                System.out.println("2. list ## To get the list of files in HDFS");
             }
             else if(Split_Commands[0].equals("put"))  // put Filename
             {

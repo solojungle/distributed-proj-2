@@ -129,6 +129,7 @@ public class DataNode implements IDataNode {
 		return response.build().toByteArray();
 	}
 /*
+
 	public void BlockReport() throws IOException {
 		BlockReport.Builder b = BlockReport.newBuilder();
 		DataNodeInfo.Builder d = DataNodeInfo.newBuilder();
@@ -172,6 +173,7 @@ public class DataNode implements IDataNode {
 			}
 		}
 	}
+
 /*
 	void BlockReportLoop() {
 		Thread t = new Thread(() -> {
@@ -199,13 +201,11 @@ public class DataNode implements IDataNode {
 
 		// connect with rmi registry
 		try {
-
 			// create the URL to contact the rmiregistry
 			String url = Me.MyName;
 			System.out.println("binding " + url);
 
 			// register it with rmiregistry
-		//	Me.BindServer(url,Me.MyIP,port);
 			Registry serverRegistry = LocateRegistry.createRegistry(port);	
 			Registry registry = LocateRegistry.getRegistry();
 			IDataNode stub = (IDataNode) UnicastRemoteObject.exportObject(Me, 0);
@@ -214,7 +214,7 @@ public class DataNode implements IDataNode {
 			System.out.println("dataNode " + url + " is running...");
 
 			// spawn off block report thread
-	//		Me.BlockReportLoop();
+			//Me.BlockReportLoop();
 		} catch (Exception e) {
 			System.out.println("dataNode failed:" + e.getMessage());
 		}
