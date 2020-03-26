@@ -11,5 +11,5 @@ then
 	java -cp src/bin:src/protobuf-java-3.11.4.jar ds.hdfs.DataNode $2
 elif [ $1 = '-nameNode' ]
 then
-	java -cp src/bin:src/protobuf-java-3.11.4.jar ds.hdfs.NameNode
+	java -cp src/bin:src/protobuf-java-3.11.4.jar:src/json-simple-1.1.1.jar ds.hdfs.NameNode
 fi
