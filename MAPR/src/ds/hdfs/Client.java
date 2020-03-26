@@ -48,8 +48,10 @@ public class Client
             try{
                 Registry registry = LocateRegistry.getRegistry(IP, Port);
                 IDataNode stub = (IDataNode) registry.lookup(Name);
+		System.out.println("found DataNode! "+Name);
                 return stub;
             }catch(Exception e){
+		System.out.println("haven't found DataNode yet. "+Name);
                 continue;
             }
         }
@@ -63,8 +65,10 @@ public class Client
             {
                 Registry registry = LocateRegistry.getRegistry(IP, Port);
                 INameNode stub = (INameNode) registry.lookup(Name);
+		System.out.println("found NameNode!");
                 return stub;
             }catch(Exception e){
+		System.out.println("haven't found NameNode yet");
                 continue;
             }
         }
@@ -74,7 +78,7 @@ public class Client
     {
     	
     	//open file
-        System.out.println("Going to put file" + fileName);
+        System.out.println("Going to put file: " + fileName);
         BufferedInputStream bis;
         try{
             bis = new BufferedInputStream(new FileInputStream(fileName));
@@ -258,7 +262,7 @@ public class Client
     }
 
     public void List()
-    {	
+    {	/*
     	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	ClientRequest r = c.build();
@@ -266,8 +270,9 @@ public class Client
     	
     	//print results
     	try {
-    		byte[] resultBytes = NNStub.list(input);
-    		ListResult fileList = ListResult.parseFrom(resultBytes);
+    		//byte[] resultBytes = NNStub.list(input);
+    		//ListResult fileList = ListResult.parseFrom(resultBytes);
+		
     		for(String s: fileList.getFileNameList()) {
     			System.out.println(s);
     		}
@@ -275,7 +280,7 @@ public class Client
     	catch(RemoteException | InvalidProtocolBufferException e) {
     		 System.err.println("Server Exception: " + e.toString());
              e.printStackTrace();
-    	}
+    	}*/
     	
     }
 
