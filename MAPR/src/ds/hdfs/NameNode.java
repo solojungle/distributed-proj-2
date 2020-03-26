@@ -300,15 +300,6 @@ public class NameNode implements INameNode {
         return result;
     }
 
-//    private HashMap<Integer, TreeSet<String>> getServerBlockReports(TreeSet<Integer> list) {
-//        HashMap<Integer, TreeSet<String>> result = new HashMap<>();
-//        for (Integer integer : list) {
-//            result.put(integer, chunks.get(integer));
-//        }
-//
-//        return result;
-//    }
-
     /**
      * @param inp
      * @return
@@ -477,15 +468,21 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] list(byte[] inp) throws RemoteException {
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+        Proto_Defn.ListResult.Builder response = Proto_Defn.ListResult.newBuilder();
+
         try {
+            JSONArray file = readJSONFile(STORAGE_PATH);
+            Iterator<?> item = file.iterator();
+            while (item.hasNext()) {
+                JSONObject current = (JSONObject) item.next();
 
-            System.out.println(new String(inp));
-
+                String filename = current.get("name").toString();
+                response.addFileName(filename);
+            }
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
             e.printStackTrace();
-            response.setStatus(-1);
+//            response.setStatus(-1);
         }
 
         return response.build().toByteArray();
