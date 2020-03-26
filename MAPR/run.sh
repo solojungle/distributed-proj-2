@@ -12,8 +12,4 @@ then
 elif [ $1 = '-nameNode' ]
 then
 	java -cp src/bin:src/protobuf-java-3.11.4.jar:src/json-simple-1.1.1.jar ds.hdfs.NameNode
-elif [ $1 = '-classpath' ]
-then
-	CLASSPATH=$CLASSPATH:src/bin/
-	export CLASSPATH
 fi
