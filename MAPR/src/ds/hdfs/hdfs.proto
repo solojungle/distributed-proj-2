@@ -46,14 +46,8 @@ message WriteBlockResponse{
 /*CLIENT MESSAGES*/
 //client -> nameNode
 message ClientRequest{
-	enum ClientRequestType{
-		GET = 0;
-		PUT = 1;
-		LIST = 2;
-	}
-	required ClientRequestType requestType = 1;
-	optional string fileName = 2;
-	optional int64 fileSize = 3; //for PUT, file size in bytes (long)
+	optional string fileName = 1;
+	optional int64 fileSize = 2; //for PUT, file size in bytes (long)
 }
 
 //client -> dataNode
@@ -76,6 +70,7 @@ message WriteBlockRequest{
 message ReturnChunkLocations{
 	repeated ChunkLocations locations = 1; //sorted by chunk number
 	optional int32 blockSize = 2; //block size in Bytes
+	required int32 status = 3; //-1 for failure, 1 for success
 }
 
 //nameNode -> client

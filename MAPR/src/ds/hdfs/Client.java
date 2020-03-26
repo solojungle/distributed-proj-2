@@ -86,7 +86,6 @@ public class Client
         
         //contact nameNode
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.PUT);
     	c.setFileName(fileName);
     	c.setFileSize(file.length());
     	byte[] input = c.build().toByteArray();
@@ -96,8 +95,12 @@ public class Client
     	ReturnChunkLocations fileList;
     	int blockSize;
 		try {
-			NNresponse = NNStub.getBlockLocations(input);
+			NNresponse = NNStub.assignBlock(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 			blockSize = fileList.getBlockSize();
 		} catch (Exception e) {
 			System.out.println("Error contacting nameNode");
@@ -184,7 +187,6 @@ public class Client
     	
     	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.GET);
     	c.setFileName(fileName);
     	byte[] input = c.build().toByteArray();
     	
@@ -194,6 +196,10 @@ public class Client
 		try {
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			if(fileList.getStatus()==-1) {
+				System.out.println("Error getting chunk locations");
+				return;
+			}
 		} catch (Exception e1) {
 			System.out.println("Error contacting nameNode");
 			e1.printStackTrace();
@@ -255,7 +261,6 @@ public class Client
     {	
     	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setRequestType(ClientRequest.ClientRequestType.LIST);
     	ClientRequest r = c.build();
     	byte[] input = r.toByteArray();
     	
