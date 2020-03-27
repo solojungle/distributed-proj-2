@@ -1,9 +1,28 @@
 Compile/run using run.sh
 
-Compile:
+
+
+COMPILE:
 bash run.sh -c
 
-Run:
-bash run.sh -client
-bash run.sh -dataNode <port number of RMI registry>
+
+
+RUNNING:
+Note: the nameNode and dataNode programs will start the RMI registry themselves. You do NOT need to run rmiregistry on the cmd line.
+
 bash run.sh -nameNode
+bash run.sh -dataNode <optional: port number to use for RMI registry for this dataNode (if not specified, will default to 1099)>
+bash run.sh -client
+
+
+
+CLIENT INSTRUCTIONS:
+>get hdfs_file local_file 	# gets file hdfs_file from HDFS and writes to local file system as local_file
+>put local_file hdfs_file	# writes local file local_file into HDFS as hdfs_file
+>list				# lists all files in HDFS
+>help				# prints these instructions
+
+
+
+TEST PROGRAM:
+(run on ilab)

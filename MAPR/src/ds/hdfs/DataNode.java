@@ -198,12 +198,15 @@ public class DataNode implements IDataNode {
 	}
 
 	public static void main(String args[]) throws InvalidProtocolBufferException, IOException {
-		if (args.length < 1) {
-			System.out.println("error: pass in port number for DataNode as cmd argument");
-			return;
+		int port = 1099; //port defaults to 1099
+		if(args.length >=1){
+			port = Integer.parseInt(args[0]); //get port no from first cmd arg
 		}
+		if(port < 0){
+			System.out.println("error: enter a valid port number");
+		}
+
 		// Define a Datanode Me
-		int port = Integer.parseInt(args[0]); // get port no from first cmd arg
 		DataNode Me = new DataNode(port);
 
 		// connect with rmi registry
