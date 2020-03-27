@@ -31,13 +31,13 @@ public class NameNode implements INameNode {
      * Global variables
      */
     static protected Registry serverRegistry; // Might be unneeded
-    static final String CONFIG_PATH = "MAPR/src/nn_config.txt"; // Path to configuration file
+    static final String CONFIG_PATH = "MAPR/src/namenode_config.txt"; // Path to configuration file
     static final String STORAGE_PATH = "MAPR/src/nn_files.json"; // Path to file storage
     static long blocksize = -1; // BlockSize of chunks
     int port; // The port
     String ip; // The ip address of the NameNode server
     String name; // The given name
-    HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
+    static HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
     HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
     /**
@@ -65,7 +65,10 @@ public class NameNode implements INameNode {
             List<String> configuration = Files.readAllLines(Paths.get(CONFIG_PATH).toAbsolutePath());
 
             /* Pass them to handler function to setup config state */
-            handleConfigurationFile(configuration);
+            HashMap<String, String> config_attr = handleConfigurationFile(configuration);
+
+            /* Set blocksize from config */
+            blocksize = Long.valueOf(config_attr.get("blocksize"));
 
             /* Make sure a file exists where we can persist the filenames */
             File file = new File(STORAGE_PATH);
@@ -80,7 +83,7 @@ public class NameNode implements INameNode {
             serverRegistry = LocateRegistry.createRegistry(1099);
 
             /* Create remote object that provides the service */
-            NameNode obj = new NameNode("localhost", 3000, "nn");
+            NameNode obj = new NameNode(config_attr.get("ip"), Integer.valueOf(config_attr.get("port")), config_attr.get("name"));
 
             /* Remote object exported to the Java RMI runtime so that it may receive incoming remote calls */
             INameNode stub = (INameNode) UnicastRemoteObject.exportObject(obj, 0);
@@ -96,8 +99,13 @@ public class NameNode implements INameNode {
 
             System.out.println("NameNode server is running...");
 
-            // Start timer
-            // System.out.println("Will check for server status on an interval of 3 secs...");
+            /* Schedule Timeout (Heartbeat Check) */
+            Long interval = Long.valueOf(config_attr.get("interval"));
+            Timer timer = new Timer();
+            TimerTask task = new Timeout(Long.valueOf(config_attr.get("timeout")));
+            timer.schedule(task, interval, interval);
+
+            System.out.println("Will check for server status on an interval of " + interval + "ms...");
 
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
@@ -105,7 +113,43 @@ public class NameNode implements INameNode {
         }
     }
 
-    private static void handleConfigurationFile(List<String> config) {
+
+    static class Timeout extends TimerTask {
+
+        long timeout;
+
+        Timeout(long timeout) {
+            this.timeout = timeout;
+        }
+
+        @Override
+        public void run() {
+
+            /* Create iterator */
+            Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
+            while(server.hasNext()) {
+                Map.Entry<Integer, DataNode> item = server.next();
+                DataNode current = item.getValue();
+                if (current.status) {
+                    // Check timeout
+
+                    long start = current.timestampz;
+                    // Get Date.now() if diff is > timeout set false...
+
+                }
+
+
+            }
+
+            System.out.println(timeout);
+        }
+    }
+
+
+    private static HashMap<String, String> handleConfigurationFile(List<String> config) {
+        /* Create Map */
+        HashMap<String, String> result = new HashMap<>();
+
         for (int i = 0; i < config.size(); i += 1) {
             String line = config.get(i);
             String[] fields = line.split("=");
@@ -117,17 +161,30 @@ public class NameNode implements INameNode {
 
             switch (fields[0]) {
                 case "ip":
+                    result.put("ip", fields[1]);
                     break;
                 case "port":
+                    result.put("port", fields[1]);
+                    break;
+                case "name":
+                    result.put("name", fields[1]);
                     break;
                 case "blocksize":
-                    blocksize = Long.valueOf(fields[1]);
+                    result.put("blocksize", fields[1]);
+                    break;
+                case "interval":
+                    result.put("interval", fields[1]);
+                    break;
+                case "timeout":
+                    result.put("timeout", fields[1]);
                     break;
                 default:
                     System.out.println("Configuration attribute isn't recognized");
                     break;
             }
         }
+
+        return result;
     }
 
     private long getBlockSize() throws RemoteException {
@@ -148,62 +205,6 @@ public class NameNode implements INameNode {
         }
 
         return size;
-    }
-
-    /**
-     * Searches the file-list for a file
-     *
-     * @param fhandle
-     * @return bool
-     */
-    boolean findInFilelist(int fhandle) {
-        return false;
-    }
-
-    /**
-     * Prints the entirety of file-list
-     */
-    public void printFilelist() {
-
-    }
-
-    /**
-     * Method to open a file given file name with read-write flag
-     *
-     * @param inp - A byte array of a .proto ClientRequest
-     * @return
-     * @throws RemoteException
-     */
-    public byte[] openFile(byte[] inp) throws RemoteException {
-//        Proto_Defn.ClientRequest input
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
-
-        try {
-        } catch (Exception e) {
-            System.err.println("Error at " + getClass() + e.toString());
-            e.printStackTrace();
-            response.setStatus(-1);
-        }
-        return response.build().toByteArray();
-    }
-
-    /**
-     * @param inp - A byte array of a .proto ClientRequest
-     * @return
-     * @throws RemoteException
-     */
-    public byte[] closeFile(byte[] inp) throws RemoteException {
-
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
-
-        try {
-        } catch (Exception e) {
-            System.err.println("Error at closefileRequest " + e.toString());
-            e.printStackTrace();
-            response.setStatus(-1);
-        }
-
-        return response.build().toByteArray();
     }
 
     /**
@@ -317,7 +318,7 @@ public class NameNode implements INameNode {
             String filename = request.getFileName();
             long filesize = request.getFileSize();
 
-            /* Get chunksize from nn_config.txt */
+            /* Get chunksize from namenode_config.txt */
             long chunksize = getBlockSize();
 
             /* Calculate the total number of chunks to create */
@@ -534,7 +535,7 @@ public class NameNode implements INameNode {
      */
     public byte[] blockReport(byte[] inp) throws RemoteException {
         /* Prepare the response to Client */
-        Proto_Defn.Response.Builder response = Proto_Defn.Response.newBuilder();
+        Proto_Defn.WriteBlockResponse.Builder response = Proto_Defn.WriteBlockResponse.newBuilder();
 
         try {
             /* Get the BlockReport */
@@ -567,7 +568,7 @@ public class NameNode implements INameNode {
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
-            response.setStatus(-1);
+            response.setStatus(false);
         }
 
         return response.build().toByteArray();
