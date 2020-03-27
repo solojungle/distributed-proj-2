@@ -27,6 +27,7 @@ public class DataNode implements IDataNode {
 	protected String MyHost;
 	protected String MyName;
 	protected int MyID;
+	protected int MyInterval; //how often DN will send blockReports (in milliseconds)
 
 	private String MyDir;
 	private TreeSet<String> MyChunks;
@@ -45,15 +46,21 @@ public class DataNode implements IDataNode {
 			e1.printStackTrace();
 		}
 
-		// look up NameNode
+
 		try {
-			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
+			// read + parse config files
+			String line = Files.readAllLines(Paths.get("src/dn_config.txt")).get(1);
+			MyInterval = Integer.parseInt(line);
+			line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
+
+			//look up NameNode
 			NNStub = GetNNStub(fields[0], fields[1], Integer.parseInt(fields[2]));
-		} catch (Exception e) {
-			System.err.println("error reading nn_config.txt");
+		} catch (IOException e) {
+			System.err.println("error reading config files");
 			e.printStackTrace();
 		}
+
 
 		// load chunks list into memory
 		MyDir = "DataNode."+MyHost;
@@ -128,7 +135,7 @@ public class DataNode implements IDataNode {
 		}
 		return response.build().toByteArray();
 	}
-/*
+
 
 	public void BlockReport() throws IOException {
 		BlockReport.Builder b = BlockReport.newBuilder();
@@ -144,7 +151,7 @@ public class DataNode implements IDataNode {
 
 		NNStub.blockReport(b.build().toByteArray());
 
-	}*/
+	}
 /*
 	public void BindServer(String Name, String IP, int Port) {
 		try {
@@ -174,21 +181,21 @@ public class DataNode implements IDataNode {
 		}
 	}
 
-/*
+
 	void BlockReportLoop() {
 		Thread t = new Thread(() -> {
 			while (true) {
 				try {
 					System.out.println("Sending block report");
 					BlockReport();
-					Thread.sleep(1000);
+					Thread.sleep(MyInterval);
 				} catch (IOException | InterruptedException e) {
 					System.out.println("Error sending block report");
 				}
 			}
 		});
 		t.start();
-	}*/
+	}
 
 	public static void main(String args[]) throws InvalidProtocolBufferException, IOException {
 		if (args.length < 1) {
