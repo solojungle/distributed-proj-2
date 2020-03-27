@@ -32,7 +32,7 @@ public class DataNode implements IDataNode {
 	private String MyDir;
 	private TreeSet<String> MyChunks;
 
-	public DataNode(int port) throws RemoteException {
+	public DataNode() throws RemoteException {
 		// initialize values
 		MyID = -1;
 		InetAddress ip;
@@ -41,18 +41,21 @@ public class DataNode implements IDataNode {
 			MyIP = ip.toString();
 			MyHost = ip.getHostName();
 			MyName = MyHost+"/DataNode";
-			MyPort = port;
 		} catch (java.net.UnknownHostException e1) {
 			e1.printStackTrace();
 		}
 
 
 		try {
-			// read + parse config files
+			// parse dn_config.txt
 			String line = Files.readAllLines(Paths.get("src/dn_config.txt")).get(1);
-			MyInterval = Integer.parseInt(line);
-			line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
 			String[] fields = line.split(";");
+			MyInterval = Integer.parseInt(fields[0]);
+			MyPort = Integer.parseInt(fields[1]);
+			
+			//parse nn_config.txt
+			line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
+			fields = line.split(";");
 
 			//look up NameNode
 			NNStub = GetNNStub(fields[0], fields[1], Integer.parseInt(fields[2]));
@@ -198,16 +201,9 @@ public class DataNode implements IDataNode {
 	}
 
 	public static void main(String args[]) throws InvalidProtocolBufferException, IOException {
-		int port = 1099; //port defaults to 1099
-		if(args.length >=1){
-			port = Integer.parseInt(args[0]); //get port no from first cmd arg
-		}
-		if(port < 0){
-			System.out.println("error: enter a valid port number");
-		}
 
 		// Define a Datanode Me
-		DataNode Me = new DataNode(port);
+		DataNode Me = new DataNode();
 
 		// connect with rmi registry
 		try {
@@ -216,7 +212,7 @@ public class DataNode implements IDataNode {
 			System.out.println("binding " + url);
 
 			// register it with rmiregistry
-			Registry serverRegistry = LocateRegistry.createRegistry(port);	
+			Registry serverRegistry = LocateRegistry.createRegistry(Me.MyPort);	
 			Registry registry = LocateRegistry.getRegistry();
 			IDataNode stub = (IDataNode) UnicastRemoteObject.exportObject(Me, 0);
 			registry.bind(url, stub);

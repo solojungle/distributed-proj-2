@@ -11,7 +11,7 @@ RUNNING:
 Note: the nameNode and dataNode programs will start the RMI registry themselves. You do NOT need to run rmiregistry on the cmd line.
 
 bash run.sh -nameNode
-bash run.sh -dataNode <optional: port number to use for RMI registry for this dataNode (if not specified, will default to 1099)>
+bash run.sh -dataNode
 bash run.sh -client
 
 

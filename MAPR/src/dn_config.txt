@@ -1,2 +1,2 @@
-//Each DataNode has this config file: next line contains interval (in milliseconds) at which DNs which send blockreports
-3000
+//Each DataNode has this config file: format is heartbeat/blockreport_interval;port
+3000;1099
