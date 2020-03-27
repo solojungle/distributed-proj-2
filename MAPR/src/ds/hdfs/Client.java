@@ -74,23 +74,23 @@ public class Client
         }
     }
 
-    public void PutFile(String fileName) //Put File
+    public void PutFile(String localFile, String hdfsFile) //Put File
     {
     	
     	//open file
-        System.out.println("Going to put file: " + fileName);
+        System.out.println("Going to put file: " + localFile + " into HDFS as: " + hdfsFile);
         BufferedInputStream bis;
         try{
-            bis = new BufferedInputStream(new FileInputStream(fileName));
+            bis = new BufferedInputStream(new FileInputStream(localFile));
         }catch(Exception e){
             System.out.println("File not found !!!");
             return;
         }
-        File file = new File(fileName);
+        File file = new File(localFile);
         
         //contact nameNode
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setFileName(fileName);
+    	c.setFileName(hdfsFile);
     	c.setFileSize(file.length());
     	byte[] input = c.build().toByteArray();
     	
@@ -143,9 +143,9 @@ public class Client
 			
 			//build request to DN
 			WriteBlockRequest.Builder DNrequest = WriteBlockRequest.newBuilder();
-	    	DNrequest.setChunkName(chunkName);
-	    	DNrequest.setBytes(ByteString.copyFrom(chunks.get(chunkNum)));
-	    	byte[] r = DNrequest.build().toByteArray();
+		    	DNrequest.setChunkName(chunkName);
+		    	DNrequest.setBytes(ByteString.copyFrom(chunks.get(chunkNum)));
+		    	byte[] r = DNrequest.build().toByteArray();
 	    	
 			//loop through each location of the given chunk until DN successfully returns bytes
 			WriteBlockResponse response = null;
@@ -167,14 +167,14 @@ public class Client
 		}
     }
 
-    public void GetFile(String fileName)
+    public void GetFile(String hdfsFile, String localFile)
     {   
     	
     	//check if file already exists and give warning if so
-    	File f = new File(fileName);
+    	File f = new File(localFile);
     	boolean exists = f.exists();
     	if(exists) {
-    		System.out.println("Warning: '"+ fileName +"' will be overwritten. Continue? [y/n]");
+    		System.out.println("Warning: '"+ localFile +"' will be overwritten. Continue? [y/n]");
     		Scanner in = new Scanner(System.in);
     		String answer = in.nextLine().trim().toLowerCase();
     		while (true) {
@@ -191,7 +191,7 @@ public class Client
     	
     	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
-    	c.setFileName(fileName);
+    	c.setFileName(hdfsFile);
     	byte[] input = c.build().toByteArray();
     	
     	//send request
@@ -249,7 +249,7 @@ public class Client
 		//write file locally
 		FileOutputStream output;
 		try {
-			output = new FileOutputStream(fileName, true);
+			output = new FileOutputStream(localFile, true);
 			 for(byte[] b: streams) {
 		        	output.write(b);
 		     }
@@ -301,17 +301,17 @@ public class Client
             if(Split_Commands[0].equals("help"))
             {
                 System.out.println("The following are the Supported Commands");
-                System.out.println("1. put filename ## To put a file in HDFS");
-                System.out.println("2. get filename ## To get a file in HDFS"); 
-                System.out.println("2. list ## To get the list of files in HDFS");
+                System.out.println("1. put local_file hdfs_file ## To put a local file local_file in HDFS with name hdfs_file");
+                System.out.println("2. get hdfs_file local_file  ## To get a file hdfs_file from HDFS and save locally as local_file"); 
+                System.out.println("3. list ## To get the list of files in HDFS");
             }
             else if(Split_Commands[0].equals("put"))  // put Filename
             {
                 //Put file into HDFS
-                String Filename;
                 try{
-                    Filename = Split_Commands[1];
-                    Me.PutFile(Filename);
+                    String localFile = Split_Commands[1];
+                    String hdfsFile = Split_Commands[2];
+                    Me.PutFile(localFile, hdfsFile);
                 }catch(ArrayIndexOutOfBoundsException e){
                     System.out.println("Please type 'help' for instructions");
                     continue;
@@ -320,10 +320,10 @@ public class Client
             else if(Split_Commands[0].equals("get"))
             {
                 //Get file from HDFS
-                String Filename;
                 try{
-                    Filename = Split_Commands[1];
-                    Me.GetFile(Filename);
+                    String hdfsFile = Split_Commands[1];
+                    String localFile = Split_Commands[2];
+                    Me.GetFile(hdfsFile, localFile);
                 }catch(ArrayIndexOutOfBoundsException e){
                     System.out.println("Please type 'help' for instructions");
                     continue;
