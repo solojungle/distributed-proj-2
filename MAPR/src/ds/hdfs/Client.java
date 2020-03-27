@@ -29,11 +29,34 @@ public class Client
     public IDataNode DNStub; //Data Node stub
     public Client()
     {
-    	//contact nameNode based off of info in config file
     	try {
-			String line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
-			String[] fields = line.split(";");
-			NNStub = GetNNStub(fields[0],fields[1],Integer.parseInt(fields[2]));
+			//parse nn_config.txt
+			String nnName = null;
+			String nnIP = null;
+			int nnPort = -1;
+			List<String> lines = Files.readAllLines(Paths.get("src/nn_config.txt"));
+			for(String s: lines){
+				String[] split = s.split("=");
+				String attr = split[0];
+				switch(attr){
+					case "name":
+						nnName = split[1];
+						break;
+					case "ip":
+						nnIP = split[1];
+						break;
+					case "port":
+						nnPort = Integer.parseInt(split[1]);
+				}
+			}
+			if(nnName == null || nnIP == null || nnPort == -1){
+				System.err.println("error parsing nn_config.txt");
+			}
+			System.out.println(nnName);
+			System.out.println(nnIP);
+			System.out.println(nnPort);
+			//look up NameNode
+			NNStub = GetNNStub(nnName, nnIP, nnPort);
 			
 		} catch (Exception e) {
 			System.err.println("error reading nn_config.txt");

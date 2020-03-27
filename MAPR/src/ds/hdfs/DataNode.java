@@ -54,11 +54,31 @@ public class DataNode implements IDataNode {
 			MyPort = Integer.parseInt(fields[1]);
 			
 			//parse nn_config.txt
-			line = Files.readAllLines(Paths.get("src/nn_config.txt")).get(1);
-			fields = line.split(";");
+			String nnName = null;
+			String nnIP = null;
+			int nnPort = -1;
+			List<String> lines = Files.readAllLines(Paths.get("src/nn_config.txt"));
+			for(String s: lines){
+				String[] split = s.split("=");
+				String attr = split[0];
+				switch(attr){
+					case "name":
+						nnName = split[1];
+						break;
+					case "ip":
+						nnIP = split[1];
+						break;
+					case "port":
+						nnPort = Integer.parseInt(split[1]);
+				}
+			}
+			if(nnName == null || nnIP == null || nnPort == -1){
+				System.err.println("error parsing nn_config.txt");
+			}
 
 			//look up NameNode
-			NNStub = GetNNStub(fields[0], fields[1], Integer.parseInt(fields[2]));
+			NNStub = GetNNStub(nnName, nnIP, nnPort);
+
 		} catch (IOException e) {
 			System.err.println("error reading config files");
 			e.printStackTrace();
