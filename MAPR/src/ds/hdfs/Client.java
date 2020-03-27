@@ -170,6 +170,8 @@ public class Client
     public void GetFile(String hdfsFile, String localFile)
     {   
     	
+        System.out.println("Going to get file: " + hdfsFile + " from HDFS as: " + localFile);
+
     	//check if file already exists and give warning if so
     	File f = new File(localFile);
     	boolean exists = f.exists();
