@@ -262,7 +262,7 @@ public class Client
     }
 
     public void List()
-    {	/*
+    {	
     	//build request
     	ClientRequest.Builder c = ClientRequest.newBuilder();
     	ClientRequest r = c.build();
@@ -270,8 +270,8 @@ public class Client
     	
     	//print results
     	try {
-    		//byte[] resultBytes = NNStub.list(input);
-    		//ListResult fileList = ListResult.parseFrom(resultBytes);
+    		byte[] resultBytes = NNStub.list(input);
+    		ListResult fileList = ListResult.parseFrom(resultBytes);
 		
     		for(String s: fileList.getFileNameList()) {
     			System.out.println(s);
@@ -280,7 +280,7 @@ public class Client
     	catch(RemoteException | InvalidProtocolBufferException e) {
     		 System.err.println("Server Exception: " + e.toString());
              e.printStackTrace();
-    	}*/
+    	}
     	
     }
 
