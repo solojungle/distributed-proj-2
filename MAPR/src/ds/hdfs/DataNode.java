@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import ds.hdfs.NameNode.Timeout;
 import ds.hdfs.Proto_Defn.BlockReport;
 import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ReadBlockRequest;
@@ -221,6 +222,23 @@ public class DataNode implements IDataNode {
 		t.start();
 	}
 
+	static class BlockReportLoop extends TimerTask {
+		 DataNode me;
+	     BlockReportLoop(DataNode dn) {
+	        this.me = dn;
+	     }
+        @Override
+        public void run() {
+        	System.out.println("Sending block report");
+        	try {
+				me.BlockReport();
+			} catch (IOException e) {
+				System.out.println("Error sending block report");
+				e.printStackTrace();
+			}
+        }
+    }
+
 	public static void main(String args[]) throws InvalidProtocolBufferException, IOException {
 
 		// Define a Datanode Me
@@ -241,7 +259,10 @@ public class DataNode implements IDataNode {
 			System.out.println("dataNode " + url + " is running...");
 
 			// spawn off block report thread
-			Me.BlockReportLoop();
+			Timer timer = new Timer();
+            TimerTask task = new BlockReportLoop(Me);
+            timer.schedule(task, Me.MyInterval, Me.MyInterval);
+            
 		} catch (Exception e) {
 			System.out.println("dataNode failed:" + e.getMessage());
 		}
