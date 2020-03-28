@@ -194,7 +194,7 @@ public class NameNode implements INameNode {
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
             e.printStackTrace();
-            response.setStatus(-1);
+            response.setStatus(false);
         }
 
         return response.build().toByteArray();
@@ -232,7 +232,7 @@ public class NameNode implements INameNode {
         }
 
         resp.setBlockSize((int) blocksize);
-        resp.setStatus(1);
+        resp.setStatus(true);
 
         return resp;
     }
@@ -317,11 +317,14 @@ public class NameNode implements INameNode {
                 chunk.setChunkName(item.next());
                 response.addLocations(chunk);
             }
+            
+            response.setStatus(true);
+            
 
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
             e.printStackTrace();
-            response.setStatus(-1);
+            response.setStatus(false);
         }
 
         return response.build().toByteArray();
@@ -437,11 +440,15 @@ public class NameNode implements INameNode {
 
                 String filename = current.get("name").toString();
                 response.addFileName(filename);
+                
             }
+        
+        response.setStatus(true);
+        
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
             e.printStackTrace();
-//            response.setStatus(-1);
+            response.setStatus(false);
         }
 
         return response.build().toByteArray();
@@ -522,6 +529,8 @@ public class NameNode implements INameNode {
             /* Insert DataNode chunks into the HashMap */
             handleChunkInsert(temp.id, dn_chunks);
 
+            response.setStatus(true);
+            
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
