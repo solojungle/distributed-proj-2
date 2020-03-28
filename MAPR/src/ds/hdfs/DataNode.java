@@ -27,7 +27,7 @@ public class DataNode implements IDataNode {
 	protected String MyHost;
 	protected String MyName;
 	protected int MyID;
-	protected int MyInterval; //how often DN will send blockReports (in milliseconds)
+	protected long MyInterval; //how often DN will send blockReports (in milliseconds)
 
 	private String MyDir;
 	private TreeSet<String> MyChunks;
@@ -50,7 +50,7 @@ public class DataNode implements IDataNode {
 			// parse dn_config.txt
 			String line = Files.readAllLines(Paths.get("src/dn_config.txt")).get(1);
 			String[] fields = line.split(";");
-			MyInterval = Integer.parseInt(fields[0]);
+			MyInterval = Long.parseLong(fields[0]);
 			MyPort = Integer.parseInt(fields[1]);
 			
 			//parse nn_config.txt
