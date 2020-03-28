@@ -9,16 +9,15 @@ option java_outer_classname = "Proto_Defn";
 
 //helper for ReturnChunkLocations
 message DataNodeInfo{
-	required int32 id = 1; //not sure how to assign ids yet
-	required string name = 2;
-	required string ip = 3;
-	required int32 port = 4;
+    required string name = 1; //formatted as hostname/DataNode
+    required string ip = 2;
+    required int32 port = 3;
 }
 
 //helper for ReturnChunkLocations
 message ChunkLocations{
-	repeated DataNodeInfo dataNodeInfo = 1;
-	required string chunkName = 2;
+    repeated DataNodeInfo dataNodeInfo = 1;
+    required string chunkName = 2;
 }
 
 
@@ -26,19 +25,19 @@ message ChunkLocations{
 /*DATA NODE MESSAGES*/
 //dataNode -> nameNode
 message BlockReport{ 
-	required DataNodeInfo dataNodeInfo = 1;
-	repeated string chunkName = 2; //i.e foo101
+    required DataNodeInfo dataNodeInfo = 1;
+    repeated string chunkName = 2; //i.e foo101
 }
 
 //dataNode -> client
 message ReadBlockResponse{
-	required bool status = 1;
-	required bytes bytes = 2;
+    required bool status = 1;
+    required bytes bytes = 2;
 }
 
 //dataNode -> client
 message WriteBlockResponse{
-	required bool status = 1;
+    required bool status = 1;
 }
 
 
@@ -46,19 +45,19 @@ message WriteBlockResponse{
 /*CLIENT MESSAGES*/
 //client -> nameNode
 message ClientRequest{
-	optional string fileName = 1;
-	optional int64 fileSize = 2; //for PUT, file size in bytes (long)
+    optional string fileName = 1;
+    optional int64 fileSize = 2; //for PUT, file size in bytes (long)
 }
 
 //client -> dataNode
 message ReadBlockRequest{
-	required string chunkName = 1;
+    required string chunkName = 1;
 }
 
 //client -> dataNode
 message WriteBlockRequest{
-	required string chunkName = 1;
-	required bytes bytes = 2;
+    required string chunkName = 1;
+    required bytes bytes = 2;
 }
 
 
@@ -68,13 +67,13 @@ message WriteBlockRequest{
 //can use for both Get and Put
 //nameNode -> client
 message ReturnChunkLocations{
-	repeated ChunkLocations locations = 1; //sorted by chunk number
-	optional int32 blockSize = 2; //block size in Bytes
-	required bool status = 3;
+    repeated ChunkLocations locations = 1; //sorted by chunk number
+    optional int32 blockSize = 2; //block size in Bytes
+    required bool status = 3;
 }
 
 //nameNode -> client
 message ListResult{
-	repeated string fileName = 1;
-	required bool status = 2;
+    repeated string fileName = 1;
+    required bool status = 2;
 }

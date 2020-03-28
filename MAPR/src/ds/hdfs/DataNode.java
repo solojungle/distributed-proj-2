@@ -34,7 +34,6 @@ public class DataNode implements IDataNode {
 
 	public DataNode() throws RemoteException {
 		// initialize values
-		MyID = -1;
 		InetAddress ip;
 		try {
 			ip = InetAddress.getLocalHost();
@@ -163,7 +162,6 @@ public class DataNode implements IDataNode {
 	public void BlockReport() throws IOException {
 		BlockReport.Builder b = BlockReport.newBuilder();
 		DataNodeInfo.Builder d = DataNodeInfo.newBuilder();
-		d.setId(MyID);
 		d.setName(MyName);
 		d.setIp(MyIP);
 		d.setPort(MyPort);

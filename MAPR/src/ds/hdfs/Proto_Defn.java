@@ -20,64 +20,57 @@ public final class Proto_Defn {
 
     /**
      * <pre>
-     *not sure how to assign ids yet
+     *formatted as hostname/DataNode
      * </pre>
      *
-     * <code>required int32 id = 1;</code>
-     * @return Whether the id field is set.
-     */
-    boolean hasId();
-    /**
-     * <pre>
-     *not sure how to assign ids yet
-     * </pre>
-     *
-     * <code>required int32 id = 1;</code>
-     * @return The id.
-     */
-    int getId();
-
-    /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      * @return Whether the name field is set.
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <pre>
+     *formatted as hostname/DataNode
+     * </pre>
+     *
+     * <code>required string name = 1;</code>
      * @return The name.
      */
     java.lang.String getName();
     /**
-     * <code>required string name = 2;</code>
+     * <pre>
+     *formatted as hostname/DataNode
+     * </pre>
+     *
+     * <code>required string name = 1;</code>
      * @return The bytes for name.
      */
     com.google.protobuf.ByteString
         getNameBytes();
 
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return Whether the ip field is set.
      */
     boolean hasIp();
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return The ip.
      */
     java.lang.String getIp();
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return The bytes for ip.
      */
     com.google.protobuf.ByteString
         getIpBytes();
 
     /**
-     * <code>required int32 port = 4;</code>
+     * <code>required int32 port = 3;</code>
      * @return Whether the port field is set.
      */
     boolean hasPort();
     /**
-     * <code>required int32 port = 4;</code>
+     * <code>required int32 port = 3;</code>
      * @return The port.
      */
     int getPort();
@@ -134,25 +127,20 @@ public final class Proto_Defn {
             case 0:
               done = true;
               break;
-            case 8: {
+            case 10: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000001;
-              id_ = input.readInt32();
+              name_ = bs;
               break;
             }
             case 18: {
               com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000002;
-              name_ = bs;
-              break;
-            }
-            case 26: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000004;
               ip_ = bs;
               break;
             }
-            case 32: {
-              bitField0_ |= 0x00000008;
+            case 24: {
+              bitField0_ |= 0x00000004;
               port_ = input.readInt32();
               break;
             }
@@ -189,42 +177,25 @@ public final class Proto_Defn {
     }
 
     private int bitField0_;
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object name_;
     /**
      * <pre>
-     *not sure how to assign ids yet
+     *formatted as hostname/DataNode
      * </pre>
      *
-     * <code>required int32 id = 1;</code>
-     * @return Whether the id field is set.
+     * <code>required string name = 1;</code>
+     * @return Whether the name field is set.
      */
-    public boolean hasId() {
+    public boolean hasName() {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      * <pre>
-     *not sure how to assign ids yet
+     *formatted as hostname/DataNode
      * </pre>
      *
-     * <code>required int32 id = 1;</code>
-     * @return The id.
-     */
-    public int getId() {
-      return id_;
-    }
-
-    public static final int NAME_FIELD_NUMBER = 2;
-    private volatile java.lang.Object name_;
-    /**
-     * <code>required string name = 2;</code>
-     * @return Whether the name field is set.
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000002) != 0);
-    }
-    /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      * @return The name.
      */
     public java.lang.String getName() {
@@ -242,7 +213,11 @@ public final class Proto_Defn {
       }
     }
     /**
-     * <code>required string name = 2;</code>
+     * <pre>
+     *formatted as hostname/DataNode
+     * </pre>
+     *
+     * <code>required string name = 1;</code>
      * @return The bytes for name.
      */
     public com.google.protobuf.ByteString
@@ -259,17 +234,17 @@ public final class Proto_Defn {
       }
     }
 
-    public static final int IP_FIELD_NUMBER = 3;
+    public static final int IP_FIELD_NUMBER = 2;
     private volatile java.lang.Object ip_;
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return Whether the ip field is set.
      */
     public boolean hasIp() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return The ip.
      */
     public java.lang.String getIp() {
@@ -287,7 +262,7 @@ public final class Proto_Defn {
       }
     }
     /**
-     * <code>required string ip = 3;</code>
+     * <code>required string ip = 2;</code>
      * @return The bytes for ip.
      */
     public com.google.protobuf.ByteString
@@ -304,17 +279,17 @@ public final class Proto_Defn {
       }
     }
 
-    public static final int PORT_FIELD_NUMBER = 4;
+    public static final int PORT_FIELD_NUMBER = 3;
     private int port_;
     /**
-     * <code>required int32 port = 4;</code>
+     * <code>required int32 port = 3;</code>
      * @return Whether the port field is set.
      */
     public boolean hasPort() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>required int32 port = 4;</code>
+     * <code>required int32 port = 3;</code>
      * @return The port.
      */
     public int getPort() {
@@ -328,10 +303,6 @@ public final class Proto_Defn {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasName()) {
         memoizedIsInitialized = 0;
         return false;
@@ -352,16 +323,13 @@ public final class Proto_Defn {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (((bitField0_ & 0x00000001) != 0)) {
-        output.writeInt32(1, id_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
       }
       if (((bitField0_ & 0x00000002) != 0)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, ip_);
       }
       if (((bitField0_ & 0x00000004) != 0)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, ip_);
-      }
-      if (((bitField0_ & 0x00000008) != 0)) {
-        output.writeInt32(4, port_);
+        output.writeInt32(3, port_);
       }
       unknownFields.writeTo(output);
     }
@@ -373,18 +341,14 @@ public final class Proto_Defn {
 
       size = 0;
       if (((bitField0_ & 0x00000001) != 0)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
       }
       if (((bitField0_ & 0x00000002) != 0)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, ip_);
       }
       if (((bitField0_ & 0x00000004) != 0)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, ip_);
-      }
-      if (((bitField0_ & 0x00000008) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, port_);
+          .computeInt32Size(3, port_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -401,11 +365,6 @@ public final class Proto_Defn {
       }
       ds.hdfs.Proto_Defn.DataNodeInfo other = (ds.hdfs.Proto_Defn.DataNodeInfo) obj;
 
-      if (hasId() != other.hasId()) return false;
-      if (hasId()) {
-        if (getId()
-            != other.getId()) return false;
-      }
       if (hasName() != other.hasName()) return false;
       if (hasName()) {
         if (!getName()
@@ -432,10 +391,6 @@ public final class Proto_Defn {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasId()) {
-        hash = (37 * hash) + ID_FIELD_NUMBER;
-        hash = (53 * hash) + getId();
-      }
       if (hasName()) {
         hash = (37 * hash) + NAME_FIELD_NUMBER;
         hash = (53 * hash) + getName().hashCode();
@@ -585,14 +540,12 @@ public final class Proto_Defn {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        id_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
         name_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         ip_ = "";
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         port_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -622,20 +575,16 @@ public final class Proto_Defn {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.id_ = id_;
           to_bitField0_ |= 0x00000001;
         }
+        result.name_ = name_;
         if (((from_bitField0_ & 0x00000002) != 0)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.name_ = name_;
-        if (((from_bitField0_ & 0x00000004) != 0)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.ip_ = ip_;
-        if (((from_bitField0_ & 0x00000008) != 0)) {
+        if (((from_bitField0_ & 0x00000004) != 0)) {
           result.port_ = port_;
-          to_bitField0_ |= 0x00000008;
+          to_bitField0_ |= 0x00000004;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -686,16 +635,13 @@ public final class Proto_Defn {
 
       public Builder mergeFrom(ds.hdfs.Proto_Defn.DataNodeInfo other) {
         if (other == ds.hdfs.Proto_Defn.DataNodeInfo.getDefaultInstance()) return this;
-        if (other.hasId()) {
-          setId(other.getId());
-        }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
           name_ = other.name_;
           onChanged();
         }
         if (other.hasIp()) {
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000002;
           ip_ = other.ip_;
           onChanged();
         }
@@ -709,9 +655,6 @@ public final class Proto_Defn {
 
       @java.lang.Override
       public final boolean isInitialized() {
-        if (!hasId()) {
-          return false;
-        }
         if (!hasName()) {
           return false;
         }
@@ -744,69 +687,24 @@ public final class Proto_Defn {
       }
       private int bitField0_;
 
-      private int id_ ;
+      private java.lang.Object name_ = "";
       /**
        * <pre>
-       *not sure how to assign ids yet
+       *formatted as hostname/DataNode
        * </pre>
        *
-       * <code>required int32 id = 1;</code>
-       * @return Whether the id field is set.
+       * <code>required string name = 1;</code>
+       * @return Whether the name field is set.
        */
-      public boolean hasId() {
+      public boolean hasName() {
         return ((bitField0_ & 0x00000001) != 0);
       }
       /**
        * <pre>
-       *not sure how to assign ids yet
+       *formatted as hostname/DataNode
        * </pre>
        *
-       * <code>required int32 id = 1;</code>
-       * @return The id.
-       */
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <pre>
-       *not sure how to assign ids yet
-       * </pre>
-       *
-       * <code>required int32 id = 1;</code>
-       * @param value The id to set.
-       * @return This builder for chaining.
-       */
-      public Builder setId(int value) {
-        bitField0_ |= 0x00000001;
-        id_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *not sure how to assign ids yet
-       * </pre>
-       *
-       * <code>required int32 id = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object name_ = "";
-      /**
-       * <code>required string name = 2;</code>
-       * @return Whether the name field is set.
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000002) != 0);
-      }
-      /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        * @return The name.
        */
       public java.lang.String getName() {
@@ -824,7 +722,11 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <pre>
+       *formatted as hostname/DataNode
+       * </pre>
+       *
+       * <code>required string name = 1;</code>
        * @return The bytes for name.
        */
       public com.google.protobuf.ByteString
@@ -841,7 +743,11 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <pre>
+       *formatted as hostname/DataNode
+       * </pre>
+       *
+       * <code>required string name = 1;</code>
        * @param value The name to set.
        * @return This builder for chaining.
        */
@@ -850,23 +756,31 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         name_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <pre>
+       *formatted as hostname/DataNode
+       * </pre>
+       *
+       * <code>required string name = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         name_ = getDefaultInstance().getName();
         onChanged();
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <pre>
+       *formatted as hostname/DataNode
+       * </pre>
+       *
+       * <code>required string name = 1;</code>
        * @param value The bytes for name to set.
        * @return This builder for chaining.
        */
@@ -875,7 +789,7 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         name_ = value;
         onChanged();
         return this;
@@ -883,14 +797,14 @@ public final class Proto_Defn {
 
       private java.lang.Object ip_ = "";
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @return Whether the ip field is set.
        */
       public boolean hasIp() {
-        return ((bitField0_ & 0x00000004) != 0);
+        return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @return The ip.
        */
       public java.lang.String getIp() {
@@ -908,7 +822,7 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @return The bytes for ip.
        */
       public com.google.protobuf.ByteString
@@ -925,7 +839,7 @@ public final class Proto_Defn {
         }
       }
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @param value The ip to set.
        * @return This builder for chaining.
        */
@@ -934,23 +848,23 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000002;
         ip_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearIp() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         ip_ = getDefaultInstance().getIp();
         onChanged();
         return this;
       }
       /**
-       * <code>required string ip = 3;</code>
+       * <code>required string ip = 2;</code>
        * @param value The bytes for ip to set.
        * @return This builder for chaining.
        */
@@ -959,7 +873,7 @@ public final class Proto_Defn {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000002;
         ip_ = value;
         onChanged();
         return this;
@@ -967,36 +881,36 @@ public final class Proto_Defn {
 
       private int port_ ;
       /**
-       * <code>required int32 port = 4;</code>
+       * <code>required int32 port = 3;</code>
        * @return Whether the port field is set.
        */
       public boolean hasPort() {
-        return ((bitField0_ & 0x00000008) != 0);
+        return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <code>required int32 port = 4;</code>
+       * <code>required int32 port = 3;</code>
        * @return The port.
        */
       public int getPort() {
         return port_;
       }
       /**
-       * <code>required int32 port = 4;</code>
+       * <code>required int32 port = 3;</code>
        * @param value The port to set.
        * @return This builder for chaining.
        */
       public Builder setPort(int value) {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         port_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required int32 port = 4;</code>
+       * <code>required int32 port = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearPort() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000004);
         port_ = 0;
         onChanged();
         return this;
@@ -8206,23 +8120,22 @@ public final class Proto_Defn {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\nhdfs.proto\022\004hdfs\"B\n\014DataNodeInfo\022\n\n\002id" +
-      "\030\001 \002(\005\022\014\n\004name\030\002 \002(\t\022\n\n\002ip\030\003 \002(\t\022\014\n\004port" +
-      "\030\004 \002(\005\"M\n\016ChunkLocations\022(\n\014dataNodeInfo" +
-      "\030\001 \003(\0132\022.hdfs.DataNodeInfo\022\021\n\tchunkName\030" +
-      "\002 \002(\t\"J\n\013BlockReport\022(\n\014dataNodeInfo\030\001 \002" +
-      "(\0132\022.hdfs.DataNodeInfo\022\021\n\tchunkName\030\002 \003(" +
-      "\t\"2\n\021ReadBlockResponse\022\016\n\006status\030\001 \002(\010\022\r" +
-      "\n\005bytes\030\002 \002(\014\"$\n\022WriteBlockResponse\022\016\n\006s" +
-      "tatus\030\001 \002(\010\"3\n\rClientRequest\022\020\n\010fileName" +
-      "\030\001 \001(\t\022\020\n\010fileSize\030\002 \001(\003\"%\n\020ReadBlockReq" +
-      "uest\022\021\n\tchunkName\030\001 \002(\t\"5\n\021WriteBlockReq" +
-      "uest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"b" +
-      "\n\024ReturnChunkLocations\022\'\n\tlocations\030\001 \003(" +
-      "\0132\024.hdfs.ChunkLocations\022\021\n\tblockSize\030\002 \001" +
-      "(\005\022\016\n\006status\030\003 \002(\010\".\n\nListResult\022\020\n\010file" +
-      "Name\030\001 \003(\t\022\016\n\006status\030\002 \002(\010B\025\n\007ds.hdfsB\nP" +
-      "roto_Defn"
+      "\n\nhdfs.proto\022\004hdfs\"6\n\014DataNodeInfo\022\014\n\004na" +
+      "me\030\001 \002(\t\022\n\n\002ip\030\002 \002(\t\022\014\n\004port\030\003 \002(\005\"M\n\016Ch" +
+      "unkLocations\022(\n\014dataNodeInfo\030\001 \003(\0132\022.hdf" +
+      "s.DataNodeInfo\022\021\n\tchunkName\030\002 \002(\t\"J\n\013Blo" +
+      "ckReport\022(\n\014dataNodeInfo\030\001 \002(\0132\022.hdfs.Da" +
+      "taNodeInfo\022\021\n\tchunkName\030\002 \003(\t\"2\n\021ReadBlo" +
+      "ckResponse\022\016\n\006status\030\001 \002(\010\022\r\n\005bytes\030\002 \002(" +
+      "\014\"$\n\022WriteBlockResponse\022\016\n\006status\030\001 \002(\010\"" +
+      "3\n\rClientRequest\022\020\n\010fileName\030\001 \001(\t\022\020\n\010fi" +
+      "leSize\030\002 \001(\003\"%\n\020ReadBlockRequest\022\021\n\tchun" +
+      "kName\030\001 \002(\t\"5\n\021WriteBlockRequest\022\021\n\tchun" +
+      "kName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"b\n\024ReturnChun" +
+      "kLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.Chu" +
+      "nkLocations\022\021\n\tblockSize\030\002 \001(\005\022\016\n\006status" +
+      "\030\003 \002(\010\".\n\nListResult\022\020\n\010fileName\030\001 \003(\t\022\016" +
+      "\n\006status\030\002 \002(\010B\025\n\007ds.hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8233,7 +8146,7 @@ public final class Proto_Defn {
     internal_static_hdfs_DataNodeInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_DataNodeInfo_descriptor,
-        new java.lang.String[] { "Id", "Name", "Ip", "Port", });
+        new java.lang.String[] { "Name", "Ip", "Port", });
     internal_static_hdfs_ChunkLocations_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_hdfs_ChunkLocations_fieldAccessorTable = new
