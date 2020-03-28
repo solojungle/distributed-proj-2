@@ -72,7 +72,7 @@ public class NameNode implements INameNode {
             }
 
             /* Initialize server registry for host machine (will not have to do this if `start rmiregistry`) */
-            serverRegistry = LocateRegistry.createRegistry(1099);
+            serverRegistry = LocateRegistry.createRegistry(Integer.valueOf(config_attr.get("port")));
 
             /* Create remote object that provides the service */
             NameNode obj = new NameNode(config_attr.get("ip"), Integer.valueOf(config_attr.get("port")), config_attr.get("name"));
