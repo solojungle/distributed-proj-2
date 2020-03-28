@@ -26,11 +26,11 @@ public class NameNode implements INameNode {
     static final String STORAGE_PATH = "src/nn_files.json"; // Path to file storage
     static protected Registry serverRegistry; // Might be unneeded
     static long blocksize = -1; // BlockSize of chunks
-    static HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
+    static HashMap<String, DataNode> servers = new HashMap<>(); // Stores DataNodes
     int port; // The port
     String ip; // The ip address of the NameNode server
     String name; // The given name
-    HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
+    HashMap<String, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
     /**
      * @param addr
@@ -204,23 +204,22 @@ public class NameNode implements INameNode {
 
         Proto_Defn.ReturnChunkLocations.Builder resp = Proto_Defn.ReturnChunkLocations.newBuilder();
 
-        TreeSet<Integer> online = getOnlineServers();
+        TreeSet<String> online = getOnlineServers();
         JSONArray filelist = (JSONArray) file.get("chunks");
-        for (Integer integer : online) {
-            TreeSet curr = chunks.get(integer);
+        for (String string : online) {
+            TreeSet curr = chunks.get(string);
             for (Object chunkname : filelist) {
                 Proto_Defn.ChunkLocations.Builder chunklocations = Proto_Defn.ChunkLocations.newBuilder();
 
                 if (curr.contains(chunkname.toString())) {
 
-                    DataNode dn = servers.get(integer);
+                    DataNode dn = servers.get(string);
 
                     Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
 
                     dninfo.setName(dn.sname);
                     dninfo.setIp(dn.ip);
                     dninfo.setPort(dn.port);
-                    dninfo.setId(dn.id);
 
                     chunklocations.addDataNodeInfo(dninfo);
                     chunklocations.setChunkName(chunkname.toString());
@@ -237,22 +236,22 @@ public class NameNode implements INameNode {
         return resp;
     }
 
-    private TreeSet<Integer> getOnlineServers() {
+    private TreeSet<String> getOnlineServers() {
         /* Instantiate TreeSet*/
-        TreeSet<Integer> result = new TreeSet<>();
+        TreeSet<String> result = new TreeSet<>();
 
         /* Create iterator */
-        Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
+        Iterator<Map.Entry<String, DataNode>> server = servers.entrySet().iterator();
         while (server.hasNext()) {
             /* Get HashMap row*/
-            Map.Entry<Integer, DataNode> map_curr = server.next();
+            Map.Entry<String, DataNode> map_curr = server.next();
 
             /* Get DataNode entry */
             DataNode curr = map_curr.getValue();
 
             /* Confirmed server is live */
             if (curr.status) {
-                result.add(curr.id);
+                result.add(curr.sname);
             }
         }
 
@@ -461,14 +460,14 @@ public class NameNode implements INameNode {
      */
     private void handleBlockReportInsert(DataNode n) {
         /* DataNode already exists, overwrite it's status and timestamp */
-        if (servers.containsKey(n.id)) {
-            DataNode temp = new DataNode(n.ip, n.port, n.sname, n.id);
-            servers.replace(temp.id, temp);
+        if (servers.containsKey(n.sname)) {
+            DataNode temp = new DataNode(n.ip, n.port, n.sname);
+            servers.replace(temp.sname, temp);
             return;
         }
 
         /* New DataNode has made contact, insert into HashMap of DataNodes */
-        servers.put(n.id, n);
+        servers.put(n.sname, n);
         return;
     }
 
@@ -476,16 +475,16 @@ public class NameNode implements INameNode {
      * @param id
      * @param chunks
      */
-    private void handleChunkInsert(int id, TreeSet<String> chunks) {
+    private void handleChunkInsert(String name, TreeSet<String> chunks) {
         /* Checking GLOBAL chunks HashMap for the existence of DataNode id */
-        if (this.chunks.containsKey(id)) {
+        if (this.chunks.containsKey(name)) {
             /* Replace old chunks with new */
-            this.chunks.replace(id, chunks);
+            this.chunks.replace(name, chunks);
             return;
         }
 
         /* Insert new chunks into HashMap */
-        this.chunks.put(id, chunks);
+        this.chunks.put(name, chunks);
 
         return;
     }
@@ -509,11 +508,10 @@ public class NameNode implements INameNode {
             Proto_Defn.DataNodeInfo info = request.getDataNodeInfo();
             String address = info.getIp();
             String name = info.getName();
-            int id = info.getId();
             int port = info.getPort();
 
             /* Create DataNode instance to insert into list */
-            DataNode temp = new DataNode(address, port, name, id);
+            DataNode temp = new DataNode(address, port, name);
 
             /* Insert new DataNode into HashMap, or recreate DataNode with a new timestampz */
             handleBlockReportInsert(temp);
@@ -527,7 +525,7 @@ public class NameNode implements INameNode {
             }
 
             /* Insert DataNode chunks into the HashMap */
-            handleChunkInsert(temp.id, dn_chunks);
+            handleChunkInsert(temp.sname, dn_chunks);
 
             response.setStatus(true);
             
@@ -552,9 +550,9 @@ public class NameNode implements INameNode {
         public void run() {
 
             /* Create iterator */
-            Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
+            Iterator<Map.Entry<String, DataNode>> server = servers.entrySet().iterator();
             while (server.hasNext()) {
-                Map.Entry<Integer, DataNode> item = server.next();
+                Map.Entry<String, DataNode> item = server.next();
                 DataNode current = item.getValue();
                 if (current.status) {
                     // Check timeout
@@ -569,7 +567,7 @@ public class NameNode implements INameNode {
                         /* Update global */
                         item.setValue(current);
 
-                        System.out.println("DataNode `" + current.id + "` has timed out.");
+                        System.out.println("DataNode `" + current.sname + "` has timed out.");
                     }
                 }
             }
@@ -585,7 +583,6 @@ public class NameNode implements INameNode {
         long timestampz;
         boolean status;
         int port;
-        int id;
 
         /**
          * @param ip
@@ -593,11 +590,10 @@ public class NameNode implements INameNode {
          * @param sname
          * @param id
          */
-        public DataNode(String ip, int port, String sname, int id) {
+        public DataNode(String ip, int port, String sname) {
             this.ip = ip;
             this.port = port;
             this.sname = sname;
-            this.id = id;
             this.timestampz = new Date().toInstant().toEpochMilli();
             this.status = true;
         }
