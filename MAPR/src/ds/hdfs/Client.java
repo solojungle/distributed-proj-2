@@ -52,9 +52,6 @@ public class Client
 			if(nnName == null || nnIP == null || nnPort == -1){
 				System.err.println("error parsing nn_config.txt");
 			}
-			System.out.println(nnName);
-			System.out.println(nnIP);
-			System.out.println(nnPort);
 			//look up NameNode
 			NNStub = GetNNStub(nnName, nnIP, nnPort);
 			

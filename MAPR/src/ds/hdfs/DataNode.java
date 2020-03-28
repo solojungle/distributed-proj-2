@@ -108,6 +108,7 @@ public class DataNode implements IDataNode {
 	 */
 
 	public byte[] readBlock(byte[] input) {
+		System.out.println("received readBlock request");
 		// read request
 		ReadBlockResponse.Builder response = ReadBlockResponse.newBuilder();
 		try {
@@ -130,12 +131,13 @@ public class DataNode implements IDataNode {
 			System.out.println("Error at readBlock");
 			response.setStatus(false);
 		}
-
+		System.out.println("finished readBlock request");
 		return response.build().toByteArray();
 	}
 
 	public byte[] writeBlock(byte[] input) {
 
+		System.out.println("received writeBlock request");
 		// read request
 		WriteBlockResponse.Builder response = WriteBlockResponse.newBuilder();
 		try {
@@ -152,9 +154,10 @@ public class DataNode implements IDataNode {
 
 			response.setStatus(true);
 		} catch (Exception e) {
-			System.out.println("Error at writeBlock ");
+			System.out.println("Error at writeBlock");
 			response.setStatus(false);
 		}
+		System.out.println("finished writeBlock request");
 		return response.build().toByteArray();
 	}
 
