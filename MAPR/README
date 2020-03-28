@@ -23,6 +23,10 @@ CLIENT INSTRUCTIONS:
 >help				# prints these instructions
 
 
+CONFIG:
+Configure nameNode by going into src/nn_config.txt
+Configure dataNode by going into src/dn_config.txt
+
 
 TEST PROGRAM:
 (run on ilab)
