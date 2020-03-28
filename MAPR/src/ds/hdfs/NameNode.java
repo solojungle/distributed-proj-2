@@ -172,6 +172,8 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
+
+	System.out.println("received getBlockLocations request");
         /* Prepare response for Client */
         Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
@@ -190,6 +192,7 @@ public class NameNode implements INameNode {
             }
 
             response = createBlockLocationResponse(file_object);
+	System.out.println("finished getBlockLocations request");
 
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -264,6 +267,7 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
+	System.out.println("received assignBlock request");
         /* Prepare response for Client */
         Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
@@ -318,6 +322,7 @@ public class NameNode implements INameNode {
             }
             
             response.setStatus(true);
+	System.out.println("finished assignBlock request");
             
 
         } catch (Exception e) {
@@ -429,6 +434,8 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] list(byte[] inp) throws RemoteException {
+
+	System.out.println("received list request");
         Proto_Defn.ListResult.Builder response = Proto_Defn.ListResult.newBuilder();
 
         try {
@@ -443,6 +450,7 @@ public class NameNode implements INameNode {
             }
         
         response.setStatus(true);
+	System.out.println("finished list request");
         
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
