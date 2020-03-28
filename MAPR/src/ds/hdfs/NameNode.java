@@ -31,7 +31,7 @@ public class NameNode implements INameNode {
      * Global variables
      */
     static protected Registry serverRegistry; // Might be unneeded
-    static final String CONFIG_PATH = "MAPR/src/namenode_config.txt"; // Path to configuration file
+    static final String CONFIG_PATH = "MAPR/src/nn_config.txt"; // Path to configuration file
     static final String STORAGE_PATH = "MAPR/src/nn_files.json"; // Path to file storage
     static long blocksize = -1; // BlockSize of chunks
     int port; // The port
@@ -132,16 +132,21 @@ public class NameNode implements INameNode {
                 DataNode current = item.getValue();
                 if (current.status) {
                     // Check timeout
-
                     long start = current.timestampz;
-                    // Get Date.now() if diff is > timeout set false...
 
+                    long end = new Date().toInstant().toEpochMilli();
+
+                    if (end - start >= timeout) {
+                        /* Change local copy */
+                        current.status = false;
+
+                        /* Update global */
+                        item.setValue(current);
+
+                        System.out.println("DataNode `" + current.id + "` has timed out.");
+                    }
                 }
-
-
             }
-
-            System.out.println(timeout);
         }
     }
 
