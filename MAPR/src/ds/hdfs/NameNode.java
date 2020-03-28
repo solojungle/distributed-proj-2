@@ -1,17 +1,12 @@
 package ds.hdfs;
 
 
-import com.sun.source.tree.Tree;
-import netscape.javascript.JSObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import javax.xml.crypto.Data;
 import java.io.*;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -27,17 +22,14 @@ import java.util.*;
  */
 public class NameNode implements INameNode {
 
-    /**
-     * Global variables
-     */
+    static final String CONFIG_PATH = "src/nn_config.txt"; // Path to configuration file
+    static final String STORAGE_PATH = "src/nn_files.json"; // Path to file storage
     static protected Registry serverRegistry; // Might be unneeded
-    static final String CONFIG_PATH = "MAPR/src/nn_config.txt"; // Path to configuration file
-    static final String STORAGE_PATH = "MAPR/src/nn_files.json"; // Path to file storage
     static long blocksize = -1; // BlockSize of chunks
+    static HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
     int port; // The port
     String ip; // The ip address of the NameNode server
     String name; // The given name
-    static HashMap<Integer, DataNode> servers = new HashMap<>(); // Stores DataNodes
     HashMap<Integer, TreeSet<String>> chunks = new HashMap<>(); // Stores the DataNode's Chunks
 
     /**
@@ -72,7 +64,7 @@ public class NameNode implements INameNode {
 
             /* Make sure a file exists where we can persist the filenames */
             File file = new File(STORAGE_PATH);
-            if(file.createNewFile()) {
+            if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(STORAGE_PATH);
                 fw.write("[]");
                 fw.close();
@@ -95,7 +87,7 @@ public class NameNode implements INameNode {
             Registry registry = LocateRegistry.getRegistry();
 
             /* Bind the remote object's stub in the registry. */
-            registry.bind("NameNode", stub);
+            registry.bind(config_attr.get("name"), stub);
 
             System.out.println("NameNode server is running...");
 
@@ -112,44 +104,6 @@ public class NameNode implements INameNode {
             e.printStackTrace();
         }
     }
-
-
-    static class Timeout extends TimerTask {
-
-        long timeout;
-
-        Timeout(long timeout) {
-            this.timeout = timeout;
-        }
-
-        @Override
-        public void run() {
-
-            /* Create iterator */
-            Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
-            while(server.hasNext()) {
-                Map.Entry<Integer, DataNode> item = server.next();
-                DataNode current = item.getValue();
-                if (current.status) {
-                    // Check timeout
-                    long start = current.timestampz;
-
-                    long end = new Date().toInstant().toEpochMilli();
-
-                    if (end - start >= timeout) {
-                        /* Change local copy */
-                        current.status = false;
-
-                        /* Update global */
-                        item.setValue(current);
-
-                        System.out.println("DataNode `" + current.id + "` has timed out.");
-                    }
-                }
-            }
-        }
-    }
-
 
     private static HashMap<String, String> handleConfigurationFile(List<String> config) {
         /* Create Map */
@@ -202,7 +156,7 @@ public class NameNode implements INameNode {
 
     private long calculateChunkAmount(long filesize, long blocksize) {
         /* Chunks can only be whole numbers not fractions, so we need to round up */
-        long size = (long)Math.ceil((double)filesize / blocksize);
+        long size = (long) Math.ceil((double) filesize / blocksize);
 
         /* If file is empty create a single chunk */
         if (size == 0) {
@@ -245,7 +199,6 @@ public class NameNode implements INameNode {
 
         return response.build().toByteArray();
     }
-
 
     private Proto_Defn.ReturnChunkLocations.Builder createBlockLocationResponse(JSONObject file) {
 
@@ -290,7 +243,7 @@ public class NameNode implements INameNode {
 
         /* Create iterator */
         Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
-        while(server.hasNext()) {
+        while (server.hasNext()) {
             /* Get HashMap row*/
             Map.Entry<Integer, DataNode> map_curr = server.next();
 
@@ -355,7 +308,7 @@ public class NameNode implements INameNode {
             appendJSONFile(STORAGE_PATH, tmp);
 
             /* Setup reponse */
-            response.setBlockSize((int)blocksize);
+            response.setBlockSize((int) blocksize);
 
             /* Add file chunks to response */
             Iterator<String> item = dn_chunk_names.iterator();
@@ -404,7 +357,7 @@ public class NameNode implements INameNode {
         return null;
     }
 
-    private void appendJSONFile(String path, JSONArray arr) throws  FileNotFoundException {
+    private void appendJSONFile(String path, JSONArray arr) throws FileNotFoundException {
         try {
             /* Read storage file and place in a JSON array */
             JSONArray old = readJSONFile(path);
@@ -420,7 +373,7 @@ public class NameNode implements INameNode {
         return;
     }
 
-    private void writeJSONFile(String path, JSONArray arr) throws  FileNotFoundException {
+    private void writeJSONFile(String path, JSONArray arr) throws FileNotFoundException {
         try {
             /* Open storage file */
             FileWriter fw = new FileWriter(path);
@@ -446,7 +399,7 @@ public class NameNode implements INameNode {
             JSONParser parser = new JSONParser();
 
             /* Parse and return the storage file */
-            json = (JSONArray)parser.parse(new FileReader(path));
+            json = (JSONArray) parser.parse(new FileReader(path));
 
         } catch (Exception e) {
             System.err.println("Error at readJSONFile " + e.toString());
@@ -501,7 +454,7 @@ public class NameNode implements INameNode {
      */
     private void handleBlockReportInsert(DataNode n) {
         /* DataNode already exists, overwrite it's status and timestamp */
-        if (this.servers.containsKey(n.id)) {
+        if (servers.containsKey(n.id)) {
             DataNode temp = new DataNode(n.ip, n.port, n.sname, n.id);
             servers.replace(temp.id, temp);
             return;
@@ -513,7 +466,6 @@ public class NameNode implements INameNode {
     }
 
     /**
-     *
      * @param id
      * @param chunks
      */
@@ -563,7 +515,7 @@ public class NameNode implements INameNode {
             TreeSet<String> dn_chunks = new TreeSet<>();
 
             /* Loop through chunks in BlockReport */
-            for (String chunk : request.getChunkNameList() ) {
+            for (String chunk : request.getChunkNameList()) {
                 dn_chunks.add(chunk);
             }
 
@@ -577,6 +529,42 @@ public class NameNode implements INameNode {
         }
 
         return response.build().toByteArray();
+    }
+
+    static class Timeout extends TimerTask {
+
+        long timeout;
+
+        Timeout(long timeout) {
+            this.timeout = timeout;
+        }
+
+        @Override
+        public void run() {
+
+            /* Create iterator */
+            Iterator<Map.Entry<Integer, DataNode>> server = servers.entrySet().iterator();
+            while (server.hasNext()) {
+                Map.Entry<Integer, DataNode> item = server.next();
+                DataNode current = item.getValue();
+                if (current.status) {
+                    // Check timeout
+                    long start = current.timestampz;
+
+                    long end = new Date().toInstant().toEpochMilli();
+
+                    if (end - start >= timeout) {
+                        /* Change local copy */
+                        current.status = false;
+
+                        /* Update global */
+                        item.setValue(current);
+
+                        System.out.println("DataNode `" + current.id + "` has timed out.");
+                    }
+                }
+            }
+        }
     }
 
     /**
