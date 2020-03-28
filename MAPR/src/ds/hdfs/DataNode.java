@@ -240,7 +240,7 @@ public class DataNode implements IDataNode {
 			System.out.println("dataNode " + url + " is running...");
 
 			// spawn off block report thread
-			//Me.BlockReportLoop();
+			Me.BlockReportLoop();
 		} catch (Exception e) {
 			System.out.println("dataNode failed:" + e.getMessage());
 		}
