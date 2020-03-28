@@ -6310,23 +6310,15 @@ public final class Proto_Defn {
     int getBlockSize();
 
     /**
-     * <pre>
-     *-1 for failure, 1 for success
-     * </pre>
-     *
-     * <code>required int32 status = 3;</code>
+     * <code>required bool status = 3;</code>
      * @return Whether the status field is set.
      */
     boolean hasStatus();
     /**
-     * <pre>
-     *-1 for failure, 1 for success
-     * </pre>
-     *
-     * <code>required int32 status = 3;</code>
+     * <code>required bool status = 3;</code>
      * @return The status.
      */
-    int getStatus();
+    boolean getStatus();
   }
   /**
    * <pre>
@@ -6396,7 +6388,7 @@ public final class Proto_Defn {
             }
             case 24: {
               bitField0_ |= 0x00000002;
-              status_ = input.readInt32();
+              status_ = input.readBool();
               break;
             }
             default: {
@@ -6516,27 +6508,19 @@ public final class Proto_Defn {
     }
 
     public static final int STATUS_FIELD_NUMBER = 3;
-    private int status_;
+    private boolean status_;
     /**
-     * <pre>
-     *-1 for failure, 1 for success
-     * </pre>
-     *
-     * <code>required int32 status = 3;</code>
+     * <code>required bool status = 3;</code>
      * @return Whether the status field is set.
      */
     public boolean hasStatus() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <pre>
-     *-1 for failure, 1 for success
-     * </pre>
-     *
-     * <code>required int32 status = 3;</code>
+     * <code>required bool status = 3;</code>
      * @return The status.
      */
-    public int getStatus() {
+    public boolean getStatus() {
       return status_;
     }
 
@@ -6571,7 +6555,7 @@ public final class Proto_Defn {
         output.writeInt32(2, blockSize_);
       }
       if (((bitField0_ & 0x00000002) != 0)) {
-        output.writeInt32(3, status_);
+        output.writeBool(3, status_);
       }
       unknownFields.writeTo(output);
     }
@@ -6592,7 +6576,7 @@ public final class Proto_Defn {
       }
       if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, status_);
+          .computeBoolSize(3, status_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6642,7 +6626,8 @@ public final class Proto_Defn {
       }
       if (hasStatus()) {
         hash = (37 * hash) + STATUS_FIELD_NUMBER;
-        hash = (53 * hash) + getStatus();
+        hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+            getStatus());
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -6791,7 +6776,7 @@ public final class Proto_Defn {
         }
         blockSize_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        status_ = 0;
+        status_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -7322,55 +7307,39 @@ public final class Proto_Defn {
         return this;
       }
 
-      private int status_ ;
+      private boolean status_ ;
       /**
-       * <pre>
-       *-1 for failure, 1 for success
-       * </pre>
-       *
-       * <code>required int32 status = 3;</code>
+       * <code>required bool status = 3;</code>
        * @return Whether the status field is set.
        */
       public boolean hasStatus() {
         return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <pre>
-       *-1 for failure, 1 for success
-       * </pre>
-       *
-       * <code>required int32 status = 3;</code>
+       * <code>required bool status = 3;</code>
        * @return The status.
        */
-      public int getStatus() {
+      public boolean getStatus() {
         return status_;
       }
       /**
-       * <pre>
-       *-1 for failure, 1 for success
-       * </pre>
-       *
-       * <code>required int32 status = 3;</code>
+       * <code>required bool status = 3;</code>
        * @param value The status to set.
        * @return This builder for chaining.
        */
-      public Builder setStatus(int value) {
+      public Builder setStatus(boolean value) {
         bitField0_ |= 0x00000004;
         status_ = value;
         onChanged();
         return this;
       }
       /**
-       * <pre>
-       *-1 for failure, 1 for success
-       * </pre>
-       *
-       * <code>required int32 status = 3;</code>
+       * <code>required bool status = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearStatus() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        status_ = 0;
+        status_ = false;
         onChanged();
         return this;
       }
@@ -7455,6 +7424,17 @@ public final class Proto_Defn {
      */
     com.google.protobuf.ByteString
         getFileNameBytes(int index);
+
+    /**
+     * <code>required bool status = 2;</code>
+     * @return Whether the status field is set.
+     */
+    boolean hasStatus();
+    /**
+     * <code>required bool status = 2;</code>
+     * @return The status.
+     */
+    boolean getStatus();
   }
   /**
    * <pre>
@@ -7516,6 +7496,11 @@ public final class Proto_Defn {
               fileName_.add(bs);
               break;
             }
+            case 16: {
+              bitField0_ |= 0x00000001;
+              status_ = input.readBool();
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -7551,6 +7536,7 @@ public final class Proto_Defn {
               ds.hdfs.Proto_Defn.ListResult.class, ds.hdfs.Proto_Defn.ListResult.Builder.class);
     }
 
+    private int bitField0_;
     public static final int FILENAME_FIELD_NUMBER = 1;
     private com.google.protobuf.LazyStringList fileName_;
     /**
@@ -7586,6 +7572,23 @@ public final class Proto_Defn {
       return fileName_.getByteString(index);
     }
 
+    public static final int STATUS_FIELD_NUMBER = 2;
+    private boolean status_;
+    /**
+     * <code>required bool status = 2;</code>
+     * @return Whether the status field is set.
+     */
+    public boolean hasStatus() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>required bool status = 2;</code>
+     * @return The status.
+     */
+    public boolean getStatus() {
+      return status_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -7593,6 +7596,10 @@ public final class Proto_Defn {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasStatus()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -7602,6 +7609,9 @@ public final class Proto_Defn {
                         throws java.io.IOException {
       for (int i = 0; i < fileName_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_.getRaw(i));
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeBool(2, status_);
       }
       unknownFields.writeTo(output);
     }
@@ -7620,6 +7630,10 @@ public final class Proto_Defn {
         size += dataSize;
         size += 1 * getFileNameList().size();
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(2, status_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -7637,6 +7651,11 @@ public final class Proto_Defn {
 
       if (!getFileNameList()
           .equals(other.getFileNameList())) return false;
+      if (hasStatus() != other.hasStatus()) return false;
+      if (hasStatus()) {
+        if (getStatus()
+            != other.getStatus()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -7651,6 +7670,11 @@ public final class Proto_Defn {
       if (getFileNameCount() > 0) {
         hash = (37 * hash) + FILENAME_FIELD_NUMBER;
         hash = (53 * hash) + getFileNameList().hashCode();
+      }
+      if (hasStatus()) {
+        hash = (37 * hash) + STATUS_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+            getStatus());
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -7791,6 +7815,8 @@ public final class Proto_Defn {
         super.clear();
         fileName_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
+        status_ = false;
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -7818,11 +7844,17 @@ public final class Proto_Defn {
       public ds.hdfs.Proto_Defn.ListResult buildPartial() {
         ds.hdfs.Proto_Defn.ListResult result = new ds.hdfs.Proto_Defn.ListResult(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (((bitField0_ & 0x00000001) != 0)) {
           fileName_ = fileName_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.fileName_ = fileName_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.status_ = status_;
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -7881,6 +7913,9 @@ public final class Proto_Defn {
           }
           onChanged();
         }
+        if (other.hasStatus()) {
+          setStatus(other.getStatus());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -7888,6 +7923,9 @@ public final class Proto_Defn {
 
       @java.lang.Override
       public final boolean isInitialized() {
+        if (!hasStatus()) {
+          return false;
+        }
         return true;
       }
 
@@ -8019,6 +8057,43 @@ public final class Proto_Defn {
         onChanged();
         return this;
       }
+
+      private boolean status_ ;
+      /**
+       * <code>required bool status = 2;</code>
+       * @return Whether the status field is set.
+       */
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       * <code>required bool status = 2;</code>
+       * @return The status.
+       */
+      public boolean getStatus() {
+        return status_;
+      }
+      /**
+       * <code>required bool status = 2;</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(boolean value) {
+        bitField0_ |= 0x00000002;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bool status = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        status_ = false;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -8145,8 +8220,9 @@ public final class Proto_Defn {
       "uest\022\021\n\tchunkName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"b" +
       "\n\024ReturnChunkLocations\022\'\n\tlocations\030\001 \003(" +
       "\0132\024.hdfs.ChunkLocations\022\021\n\tblockSize\030\002 \001" +
-      "(\005\022\016\n\006status\030\003 \002(\005\"\036\n\nListResult\022\020\n\010file" +
-      "Name\030\001 \003(\tB\025\n\007ds.hdfsB\nProto_Defn"
+      "(\005\022\016\n\006status\030\003 \002(\010\".\n\nListResult\022\020\n\010file" +
+      "Name\030\001 \003(\t\022\016\n\006status\030\002 \002(\010B\025\n\007ds.hdfsB\nP" +
+      "roto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8211,7 +8287,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ListResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ListResult_descriptor,
-        new java.lang.String[] { "FileName", });
+        new java.lang.String[] { "FileName", "Status", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

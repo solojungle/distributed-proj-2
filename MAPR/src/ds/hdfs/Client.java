@@ -124,7 +124,7 @@ public class Client
 		try {
 			NNresponse = NNStub.assignBlock(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
-			if(fileList.getStatus()==-1) {
+			if(fileList.getStatus()==false) {
 				System.out.println("Error getting chunk locations");
 				return;
 			}
@@ -225,7 +225,7 @@ public class Client
 		try {
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
-			if(fileList.getStatus()==-1) {
+			if(fileList.getStatus()==false) {
 				System.out.println("Error getting chunk locations");
 				return;
 			}
