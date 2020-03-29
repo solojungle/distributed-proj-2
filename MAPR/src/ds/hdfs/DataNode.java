@@ -235,9 +235,8 @@ public class DataNode implements IDataNode {
 
 			// register it with rmiregistry
 			Registry serverRegistry = LocateRegistry.createRegistry(Me.MyPort);	
-			Registry registry = LocateRegistry.getRegistry();
 			IDataNode stub = (IDataNode) UnicastRemoteObject.exportObject(Me, 0);
-			registry.bind(url, stub);
+			serverRegistry.bind(url, stub);
 
 			System.out.println("dataNode " + url + " is running...");
 
