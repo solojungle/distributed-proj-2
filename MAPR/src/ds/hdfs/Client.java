@@ -259,7 +259,7 @@ public class Client
 					System.out.println("error contacting dataNode: "+d.getName());
 				}  
 				
-			} while(i++ < list.size() && response.getStatus()==false);
+			} while(++i < list.size() && response.getStatus()==false);
 			
 			if(response.getStatus()==false) { //all failed to read
 				System.out.println("error: failed to retrieve file");
