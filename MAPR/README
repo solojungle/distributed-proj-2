@@ -100,13 +100,13 @@ $> list
 
 The client will display the name big_remote since it is now present in the HDFS.
 
-$> get big_remote example_outputs/big_local
-The NameNode will show it received and finished a getBlockLocation request. Each dataNode will show it received and finished multiple readBlock requests. The client will show which data node it contacted to receive each chunk. A new file big_local will appear in the example_outputs directory. Opening this file will show that it contains the same contents as the original file.
+$> get big_remote big_local
+The NameNode will show it received and finished a getBlockLocation request. Each dataNode will show it received and finished multiple readBlock requests. The client will show which data node it contacted to receive each chunk. A new file big_local will appear in the current directory. Opening this file will show that it contains the same contents as the original file.
 
 
 You can then go and look at which data node(s) the client contacted in the previous get request. Then, go to one of the data nodes the client previously contacted and interrupt the process (CTRL+C). Wait a few seconds and the NameNode will say that that data node has timed out. Then, make the same request again:
 
-$> get big_remote example_outputs/big_local2
+$> get big_remote big_local2
 
 The client will show that it is contacting the other data node this time, and looking at the file big_local2 will show that the client was still able to retrieve the file. 
 
@@ -120,7 +120,7 @@ ON THE PREVIOUSLY INTERRUPTED MACHINE:
 bash run.sh -dataNode
 
 ON THE CLIENT:
-$> get big_remote example_outputs/big_local3
+$> get big_remote big_local3
 
 
 
