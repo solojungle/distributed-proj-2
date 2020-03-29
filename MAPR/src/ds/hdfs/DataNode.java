@@ -38,7 +38,7 @@ public class DataNode implements IDataNode {
 		InetAddress ip;
 		try {
 			ip = InetAddress.getLocalHost();
-			MyIP = ip.toString();
+			MyIP = ip.getHostAddress();
 			MyHost = ip.getHostName();
 			MyName = MyHost+"/DataNode";
 		} catch (java.net.UnknownHostException e1) {
