@@ -22,3 +22,10 @@ Lesson 3: How to use Java RMI
 the communication between the NameNode, DataNodes, and clients. We learned how to create the RMI registry
 and bind objects to it. We also learned how to invoke the remote methods and how to serialize the requests
 and responses using protocol buffers.
+
+
+Division of work:
+Data node & client - Michelle
+Name node - Ali
+Testing - shared
+
