@@ -215,15 +215,19 @@ public class NameNode implements INameNode {
 
         TreeSet<String> online = getOnlineServers();
         JSONArray filelist = (JSONArray) file.get("chunks");
-        for (String string : online) {
-            TreeSet curr = chunks.get(string);
-            for (Object chunkname : filelist) {
-                Proto_Defn.ChunkLocations.Builder chunklocations = Proto_Defn.ChunkLocations.newBuilder();
 
-                if (curr.contains(chunkname.toString())) {
+        //loop through each chunk
+        for(Object chunkname : filelist){
+            Proto_Defn.ChunkLocations.Builder chunklocations = Proto_Defn.ChunkLocations.newBuilder();
+            chunklocations.setChunkName(chunkname.toString());
+        
+            //for each server, check if that server has the chunk
+            for (String string : online){
+                TreeSet curr = chunks.get(string);
+                if (curr.contains(chunkname.toString())) {	
 
+                    //if server has chunk, add data node to list of locations for that chunk
                     DataNode dn = servers.get(string);
-
                     Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
 
                     dninfo.setName(dn.sname);
@@ -231,14 +235,13 @@ public class NameNode implements INameNode {
                     dninfo.setPort(dn.port);
 
                     chunklocations.addDataNodeInfo(dninfo);
-                    chunklocations.setChunkName(chunkname.toString());
-
-                    resp.addLocations(chunklocations);
-
-                }
-            }
+                }	
+	    }
+            //add locations of given chunk to response
+            resp.addLocations(chunklocations);
         }
 
+	//set request info
         resp.setBlockSize((int) blocksize);
         resp.setStatus(true);
 
