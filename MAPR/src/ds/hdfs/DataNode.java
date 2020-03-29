@@ -206,22 +206,6 @@ public class DataNode implements IDataNode {
 		}
 	}
 
-
-	void BlockReportLoop() {
-		Thread t = new Thread(() -> {
-			while (true) {
-				try {
-					System.out.println("Sending block report");
-					BlockReport();
-					Thread.sleep(MyInterval);
-				} catch (IOException | InterruptedException e) {
-					System.out.println("Error sending block report");
-				}
-			}
-		});
-		t.start();
-	}
-
 	static class BlockReportLoop extends TimerTask {
 		 DataNode me;
 	     BlockReportLoop(DataNode dn) {
@@ -234,7 +218,6 @@ public class DataNode implements IDataNode {
 				me.BlockReport();
 			} catch (IOException e) {
 				System.out.println("Error sending block report");
-				e.printStackTrace();
 			}
         }
     }

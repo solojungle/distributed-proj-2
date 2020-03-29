@@ -223,7 +223,7 @@ public class Client
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
 			if(fileList.getStatus()==false) {
-				System.out.println("Error getting chunk locations");
+				System.out.println("Error: no servers available");
 				return;
 			}
 		} catch (Exception e1) {
@@ -234,7 +234,18 @@ public class Client
 
 		List<ChunkLocations> locations = fileList.getLocationsList();
 		ArrayList<byte[]> streams = new ArrayList<byte[]>();
-		
+
+
+		//print chunk/replica info
+		for(ChunkLocations l: locations){
+			int count = 0;
+			System.out.println("----"+l.getChunkName()+"----");
+			for(DataNodeInfo dn : l.getDataNodeInfoList()){
+				System.out.println("replica "+count+": "+dn.getName());
+				count++;
+			}
+		}
+
 		//loop through each chunk
 		for(ChunkLocations l: locations) {
 			String chunkName = l.getChunkName();
@@ -242,8 +253,8 @@ public class Client
 			
 			//build request to DN
 			ReadBlockRequest.Builder DNrequest = ReadBlockRequest.newBuilder();
-	    	DNrequest.setChunkName(chunkName);
-	    	byte[] r = DNrequest.build().toByteArray();
+		    	DNrequest.setChunkName(chunkName);
+		    	byte[] r = DNrequest.build().toByteArray();
 	    	
 			//loop through each location of the given chunk until DN successfully returns bytes
 			ReadBlockResponse response = null;
@@ -357,6 +368,10 @@ public class Client
                 System.out.println("List request");
                 //Get list of files in HDFS
                 Me.List();
+            }
+            else if(Split_Commands[0].equals("quit"))
+            {
+                return;
             }
             else
             {

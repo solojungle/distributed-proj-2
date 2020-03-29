@@ -1,6 +1,6 @@
 name=NN
-ip=192.168.12.75
-port=2004
+ip=128.6.13.171
+port=1099
 blocksize=64
 interval=3000
 timeout=5000
