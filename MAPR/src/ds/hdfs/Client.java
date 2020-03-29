@@ -260,8 +260,6 @@ public class Client
 			ReadBlockResponse response = null;
 			int i = 0;
 			do {
-				System.out.println(i);
-				System.out.println(list.size());
 				DataNodeInfo d = list.get(i);
 				IDataNode dataNode = GetDNStub(d.getName(),d.getIp(),d.getPort());
 				byte[] b;
