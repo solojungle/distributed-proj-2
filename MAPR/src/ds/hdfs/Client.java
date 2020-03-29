@@ -248,7 +248,7 @@ public class Client
 		List<ChunkLocations> locations = fileList.getLocationsList();
 		ArrayList<byte[]> streams = new ArrayList<byte[]>();
 
-
+/*
 		//print chunk/replica info
 		for(ChunkLocations l: locations){
 			int count = 0;
@@ -258,7 +258,7 @@ public class Client
 				count++;
 			}
 		}
-
+*/
 		//loop through each chunk
 		for(ChunkLocations l: locations) {
 			String chunkName = l.getChunkName();
