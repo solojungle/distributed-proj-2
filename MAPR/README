@@ -91,7 +91,6 @@ $> list
 The client will show that it is making a list request, but no file names should appear because there are no files created yet.
 The NameNode will show that it received and finished a list request.
 
-
 $> put bigfile big_remote
 
 The name node server will show that it received and completed an assignBlock request. The client will show that it successfully connected with the 2 data nodes. Each data node will show that it received and completed multiple writeBlock requests. If you look into each data node's individual folders, you will see several chunks appear in each one.
@@ -101,6 +100,7 @@ $> list
 The client will display the name big_remote since it is now present in the HDFS.
 
 $> get big_remote big_local
+
 The NameNode will show it received and finished a getBlockLocation request. Each data node will show it received and finished multiple readBlock requests. The client will show which data node it contacted to receive each chunk. A new file big_local will appear in the current directory. Opening this file will show that it contains the same contents as the original file.
 
 
