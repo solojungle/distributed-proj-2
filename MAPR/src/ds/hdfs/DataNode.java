@@ -13,7 +13,6 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import ds.hdfs.NameNode.Timeout;
 import ds.hdfs.Proto_Defn.BlockReport;
 import ds.hdfs.Proto_Defn.DataNodeInfo;
 import ds.hdfs.Proto_Defn.ReadBlockRequest;
@@ -28,7 +27,7 @@ public class DataNode implements IDataNode {
 	protected String MyHost;
 	protected String MyName;
 	protected int MyID;
-	protected long MyInterval; //how often DN will send blockReports (in milliseconds)
+	protected long MyInterval; // how often DN will send blockReports (in milliseconds)
 
 	private String MyDir;
 	private TreeSet<String> MyChunks;
@@ -40,11 +39,10 @@ public class DataNode implements IDataNode {
 			ip = InetAddress.getLocalHost();
 			MyIP = ip.getHostAddress();
 			MyHost = ip.getHostName();
-			MyName = MyHost+"/DataNode";
+			MyName = MyHost + "/DataNode";
 		} catch (java.net.UnknownHostException e1) {
 			e1.printStackTrace();
 		}
-
 
 		try {
 			// parse dn_config.txt
@@ -52,31 +50,31 @@ public class DataNode implements IDataNode {
 			String[] fields = line.split(";");
 			MyInterval = Long.parseLong(fields[0]);
 			MyPort = Integer.parseInt(fields[1]);
-			
-			//parse nn_config.txt
+
+			// parse nn_config.txt
 			String nnName = null;
 			String nnIP = null;
 			int nnPort = -1;
 			List<String> lines = Files.readAllLines(Paths.get("src/nn_config.txt"));
-			for(String s: lines){
+			for (String s : lines) {
 				String[] split = s.split("=");
 				String attr = split[0];
-				switch(attr){
-					case "name":
-						nnName = split[1];
-						break;
-					case "ip":
-						nnIP = split[1];
-						break;
-					case "port":
-						nnPort = Integer.parseInt(split[1]);
+				switch (attr) {
+				case "name":
+					nnName = split[1];
+					break;
+				case "ip":
+					nnIP = split[1];
+					break;
+				case "port":
+					nnPort = Integer.parseInt(split[1]);
 				}
 			}
-			if(nnName == null || nnIP == null || nnPort == -1){
+			if (nnName == null || nnIP == null || nnPort == -1) {
 				System.err.println("error parsing nn_config.txt");
 			}
 
-			//look up NameNode
+			// look up NameNode
 			NNStub = GetNNStub(nnName, nnIP, nnPort);
 
 		} catch (IOException e) {
@@ -84,9 +82,8 @@ public class DataNode implements IDataNode {
 			e.printStackTrace();
 		}
 
-
 		// load chunks list into memory
-		MyDir = "DataNode."+MyHost;
+		MyDir = "DataNode." + MyHost;
 		File dir = new File(MyDir);
 		dir.mkdir(); // make directory if doesn't exist
 		String[] files = dir.list();
@@ -162,7 +159,6 @@ public class DataNode implements IDataNode {
 		return response.build().toByteArray();
 	}
 
-
 	public void BlockReport() throws IOException {
 		BlockReport.Builder b = BlockReport.newBuilder();
 		DataNodeInfo.Builder d = DataNodeInfo.newBuilder();
@@ -177,20 +173,16 @@ public class DataNode implements IDataNode {
 		NNStub.blockReport(b.build().toByteArray());
 
 	}
-/*
-	public void BindServer(String Name, String IP, int Port) {
-		try {
-			IDataNode stub = (IDataNode) UnicastRemoteObject.exportObject(this, 0);
-			System.setProperty("java.rmi.server.hostname", IP);
-			serverRegistry = LocateRegistry.createRegistry(Port);	
-			Registry registry = LocateRegistry.getRegistry(Port);
-			registry.rebind(Name, stub);
-			System.out.println("\nDataNode connected to RMIregistry\n");
-		} catch (Exception e) {
-			System.err.println("Server Exception: " + e.toString());
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * public void BindServer(String Name, String IP, int Port) { try { IDataNode
+	 * stub = (IDataNode) UnicastRemoteObject.exportObject(this, 0);
+	 * System.setProperty("java.rmi.server.hostname", IP); serverRegistry =
+	 * LocateRegistry.createRegistry(Port); Registry registry =
+	 * LocateRegistry.getRegistry(Port); registry.rebind(Name, stub);
+	 * System.out.println("\nDataNode connected to RMIregistry\n"); } catch
+	 * (Exception e) { System.err.println("Server Exception: " + e.toString());
+	 * e.printStackTrace(); } }
+	 */
 
 	public INameNode GetNNStub(String Name, String IP, int Port) {
 		while (true) {
@@ -207,20 +199,22 @@ public class DataNode implements IDataNode {
 	}
 
 	static class BlockReportLoop extends TimerTask {
-		 DataNode me;
-	     BlockReportLoop(DataNode dn) {
-	        this.me = dn;
-	     }
-        @Override
-        public void run() {
-        	System.out.println("Sending block report");
-        	try {
+		DataNode me;
+
+		BlockReportLoop(DataNode dn) {
+			this.me = dn;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("Sending block report");
+			try {
 				me.BlockReport();
 			} catch (IOException e) {
 				System.out.println("Error sending block report");
 			}
-        }
-    }
+		}
+	}
 
 	public static void main(String args[]) throws InvalidProtocolBufferException, IOException {
 
@@ -234,7 +228,7 @@ public class DataNode implements IDataNode {
 			System.out.println("binding " + url);
 
 			// register it with rmiregistry
-			Registry serverRegistry = LocateRegistry.createRegistry(Me.MyPort);	
+			Registry serverRegistry = LocateRegistry.createRegistry(Me.MyPort);
 			IDataNode stub = (IDataNode) UnicastRemoteObject.exportObject(Me, 0);
 			serverRegistry.bind(url, stub);
 
@@ -242,9 +236,9 @@ public class DataNode implements IDataNode {
 
 			// spawn off block report thread
 			Timer timer = new Timer();
-            TimerTask task = new BlockReportLoop(Me);
-            timer.schedule(task, Me.MyInterval, Me.MyInterval);
-            
+			TimerTask task = new BlockReportLoop(Me);
+			timer.schedule(task, Me.MyInterval, Me.MyInterval);
+
 		} catch (Exception e) {
 			System.out.println("dataNode failed:" + e.getMessage());
 		}
