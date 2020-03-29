@@ -121,10 +121,23 @@ public class Client
 		try {
 			NNresponse = NNStub.assignBlock(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+			
+			//check for errors
 			if(fileList.getStatus()==false) {
-				System.out.println("Error getting chunk locations");
+				if(fileList.hasError()) {
+					if(fileList.getError()==ReturnChunkLocations.ErrorCode.FILE_ALREADY_EXISTS) {
+						System.out.println("Error: '"+hdfsFile+"' already exists in HDFS");
+					}
+					else if(fileList.getError()==ReturnChunkLocations.ErrorCode.NOT_ENOUGH_SERVERS) {
+						System.out.println("Error: there are not enough available servers right now");
+					}
+				}
+				else {
+					System.out.println("Error getting chunk locations");
+				}
 				return;
 			}
+			
 			blockSize = fileList.getBlockSize();
 		} catch (Exception e) {
 			System.out.println("Error contacting nameNode");
