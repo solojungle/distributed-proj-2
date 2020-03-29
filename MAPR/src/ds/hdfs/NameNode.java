@@ -237,6 +237,14 @@ public class NameNode implements INameNode {
                     chunklocations.addDataNodeInfo(dninfo);
                 }	
 	    }
+
+            //if given chunk was not found on any server, report error, client is unable to read file
+            if(chunklocations.getDataNodeInfoCount() == 0){
+                resp.setStatus(false);
+                resp.setBlockSize((int) blocksize);
+                return resp;
+            }
+
             //add locations of given chunk to response
             resp.addLocations(chunklocations);
         }
