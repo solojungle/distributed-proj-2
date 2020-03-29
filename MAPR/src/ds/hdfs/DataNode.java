@@ -124,7 +124,7 @@ public class DataNode implements IDataNode {
 			}
 
 			// read and send bytes
-			String path = MyDir + fileName;
+			String path = MyDir + "/" + fileName;
 			byte[] bytes = Files.readAllBytes(Paths.get(path));
 			response.setBytes(ByteString.copyFrom(bytes));
 			response.setStatus(true);
@@ -146,7 +146,7 @@ public class DataNode implements IDataNode {
 			String fileName = w.getChunkName();
 
 			// write bytes to file
-			FileOutputStream output = new FileOutputStream(fileName, false);
+			FileOutputStream output = new FileOutputStream(MyDir + "/" + fileName, false);
 			output.write(w.getBytes().toByteArray());
 			output.close();
 
