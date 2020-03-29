@@ -26,6 +26,7 @@ public class NameNode implements INameNode {
     static final String STORAGE_PATH = "src/nn_files.json"; // Path to file storage
     static protected Registry serverRegistry; // Might be unneeded
     static long blocksize = -1; // BlockSize of chunks
+    static long replication_factor = -1;
     static HashMap<String, DataNode> servers = new HashMap<>(); // Stores DataNodes
     int port; // The port
     String ip; // The ip address of the NameNode server
@@ -61,6 +62,8 @@ public class NameNode implements INameNode {
 
             /* Set blocksize from config */
             blocksize = Long.valueOf(config_attr.get("blocksize"));
+
+            replication_factor = Long.valueOf(config_attr.get("replication"));
 
             /* Make sure a file exists where we can persist the filenames */
             File file = new File(STORAGE_PATH);
@@ -137,6 +140,9 @@ public class NameNode implements INameNode {
                 case "timeout":
                     result.put("timeout", fields[1]);
                     break;
+                case "replication":
+                    result.put("replication", fields[1]);
+                    break;
                 default:
                     System.out.println("Configuration attribute isn't recognized");
                     break;
@@ -173,7 +179,7 @@ public class NameNode implements INameNode {
      */
     public byte[] getBlockLocations(byte[] inp) throws RemoteException {
 
-	System.out.println("received getBlockLocations request");
+        System.out.println("received getBlockLocations request");
         /* Prepare response for Client */
         Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
@@ -192,7 +198,7 @@ public class NameNode implements INameNode {
             }
 
             response = createBlockLocationResponse(file_object);
-	System.out.println("finished getBlockLocations request");
+            System.out.println("finished getBlockLocations request");
 
         } catch (Exception e) {
             System.err.println("Error at getBlockLocations " + e.toString());
@@ -267,11 +273,16 @@ public class NameNode implements INameNode {
      * @throws RemoteException
      */
     public byte[] assignBlock(byte[] inp) throws RemoteException {
-	System.out.println("received assignBlock request");
+        System.out.println("received assignBlock request");
         /* Prepare response for Client */
         Proto_Defn.ReturnChunkLocations.Builder response = Proto_Defn.ReturnChunkLocations.newBuilder();
 
         try {
+            Object[] online = getOnlineServers().toArray();
+            if (online.length < 1) {
+                throw new Error("error: no servers online");
+            }
+
             /* Get the ClientRequest */
             Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
 
@@ -286,7 +297,6 @@ public class NameNode implements INameNode {
             long number_of_chunks = calculateChunkAmount(filesize, chunksize);
 
             /* Create the chunk names that will be distributed to DataNodes */
-            // TreeSet<String> dn_chunk_names = new TreeSet<>(); ???
             JSONArray dn_chunk_names = new JSONArray();
             for (int i = 0; i < number_of_chunks; i += 1) {
                 dn_chunk_names.add(filename + ":" + chunksize + ":" + i + ":" + new Date().toInstant().toEpochMilli());
@@ -313,17 +323,38 @@ public class NameNode implements INameNode {
             /* Setup reponse */
             response.setBlockSize((int) blocksize);
 
-            /* Add file chunks to response */
-            Iterator<String> item = dn_chunk_names.iterator();
-            while (item.hasNext()) {
-                Proto_Defn.ChunkLocations.Builder chunk = Proto_Defn.ChunkLocations.newBuilder();
-                chunk.setChunkName(item.next());
-                response.addLocations(chunk);
+            long rep = replication_factor;
+            for (int i = 0; i < dn_chunk_names.size(); i++) {
+                for (int j = 0; j < online.length; j++) {
+
+                    Proto_Defn.ChunkLocations.Builder chunk = Proto_Defn.ChunkLocations.newBuilder();
+
+                    DataNode dn = servers.get(online[j]);
+
+                    Proto_Defn.DataNodeInfo.Builder dninfo = Proto_Defn.DataNodeInfo.newBuilder();
+                    dninfo.setName(dn.sname);
+                    dninfo.setIp(dn.ip);
+                    dninfo.setPort(dn.port);
+
+                    chunk.addDataNodeInfo(dninfo);
+
+                    rep -= 1;
+
+                    if (j < online.length) {
+                        j = 0;
+                    }
+                    if (rep == 0) {
+                        chunk.setChunkName(dn_chunk_names.get(i).toString());
+                        response.addLocations(chunk);
+                        break;
+                    }
+                }
+
+                rep = replication_factor;
             }
-            
+
             response.setStatus(true);
-	System.out.println("finished assignBlock request");
-            
+            System.out.println("finished assignBlock request");
 
         } catch (Exception e) {
             System.err.println("Error at AssignBlock " + e.toString());
@@ -435,7 +466,7 @@ public class NameNode implements INameNode {
      */
     public byte[] list(byte[] inp) throws RemoteException {
 
-	System.out.println("received list request");
+        System.out.println("received list request");
         Proto_Defn.ListResult.Builder response = Proto_Defn.ListResult.newBuilder();
 
         try {
@@ -446,12 +477,12 @@ public class NameNode implements INameNode {
 
                 String filename = current.get("name").toString();
                 response.addFileName(filename);
-                
+
             }
-        
-        response.setStatus(true);
-	System.out.println("finished list request");
-        
+
+            response.setStatus(true);
+            System.out.println("finished list request");
+
         } catch (Exception e) {
             System.err.println("Error at list " + e.toString());
             e.printStackTrace();
@@ -536,7 +567,7 @@ public class NameNode implements INameNode {
             handleChunkInsert(temp.sname, dn_chunks);
 
             response.setStatus(true);
-            
+
         } catch (Exception e) {
             System.err.println("Error at blockReport " + e.toString());
             e.printStackTrace();
@@ -602,8 +633,8 @@ public class NameNode implements INameNode {
             this.ip = ip;
             this.port = port;
             this.sname = sname;
-            this.timestampz = new Date().toInstant().toEpochMilli();
-            this.status = true;
+            timestampz = new Date().toInstant().toEpochMilli();
+            status = true;
         }
     }
 

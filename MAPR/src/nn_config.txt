@@ -4,3 +4,4 @@ port=2004
 blocksize=64
 interval=3000
 timeout=5000
+replication=2
