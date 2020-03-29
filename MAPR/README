@@ -1,7 +1,5 @@
 Compile/run using run.sh
 
-
-
 COMPILE:
 bash run.sh -c
 
@@ -10,23 +8,120 @@ bash run.sh -c
 RUNNING:
 Note: the nameNode and dataNode programs will start the RMI registry themselves. You do NOT need to run rmiregistry on the cmd line.
 
+All commands should be run from this directory (where this README and run.sh are located).
+
 bash run.sh -nameNode
 bash run.sh -dataNode
 bash run.sh -client
 
 
-
-CLIENT INSTRUCTIONS:
->get hdfs_file local_file 	# gets file hdfs_file from HDFS and writes to local file system as local_file
->put local_file hdfs_file	# writes local file local_file into HDFS as hdfs_file
->list				# lists all files in HDFS
->help				# prints these instructions
+CLEAN UP /bin directory:
+bash run.sh -clean
 
 
 CONFIG:
 Configure nameNode by going into src/nn_config.txt
 Configure dataNode by going into src/dn_config.txt
 
+All intervals in config files are in milliseconds
 
-TEST PROGRAM:
-(run on ilab)
+
+
+RUNNING NAMENODE
+
+bash run.sh -nameNode
+
+The nn_config.txt file (src/nn_config.txt) provided is set up such that NameNode should be run from ls.cs.rutgers.edu. To run NameNode from another machine, change the IP address in nn_config.txt to the IP address of the desired machine. You can also change other configuration settings from nn_config.txt.
+
+
+RUNNING DATANODE
+
+bash run.sh -dataNode
+
+DataNode should be run on multiple machines.
+
+The dn_config.txt file (src/dn_config.txt) allows you to control the interval at which heartbeats/blockReports are sent. They are combined into one message. The default configuration included is every 3000 ms (3 seconds). This file also allows you to change the port on which the RMI registry is started. The program will automatically determine its IP address and name used to identify itself, so there is no need to specify it.
+
+
+RUNNING CLIENT
+
+bash run.sh -client
+
+CLIENT INSTRUCTIONS:
+>get hdfs_file local_file 	# gets file hdfs_file from HDFS and writes to local file system as local_file
+>put local_file hdfs_file	# writes local file local_file into HDFS as hdfs_file
+>list				# lists all files in HDFS
+>help				# prints these instructions
+>quit				# exit client
+
+
+
+
+
+EXAMPLE PROGRAM (2 data nodes, replication factor of 2, block size = 64 bytes) (see config files for full specs)
+Test files are provided in the example_files directory
+(run on ilabs)
+
+RUN ON ls.cs.rutgers.edu:
+bash run.sh -c
+bash run.sh -nameNode
+
+The program will show that the nameNode server is running.
+
+RUN ON cd.cs.rutgers.edu:
+bash run.sh -dataNode
+
+RUN ON kill.cs.rutgers.edu:
+bash run.sh -dataNode
+
+The programs will both show that the dataNode server is running and start sending block reports.
+Each dataNode will create a folder to store its chunks named "DataNode.<hostname>".
+
+RUN ON less.cs.rutgers.edu:
+bash run.sh -client
+
+The user interface will appear. From here, you can use the instructions given above to interact with the HDFS.
+
+
+
+
+
+$> list
+
+The client will show that it is making a list request, but no file names should appear because there are no files created yet.
+The NameNode will show that it received and finished a list request.
+
+
+$> put bigfile big_remote
+
+The NameNode server will show that it received and completed an assignBlock request. The client will show that it successfully connected with the 2 dataNodes. Each dataNode will show that it received and completed multiple writeBlock requests. If you look into each dataNode's individual folders, you will see several chunks appear in each one.
+
+$> list
+
+The client will display the name big_remote since it is now present in the HDFS.
+
+$> get big_remote example_outputs/big_local
+The NameNode will show it received and finished a getBlockLocation request. Each dataNode will show it received and finished multiple readBlock requests. The client will show which data node it contacted to receive each chunk. A new file big_local will appear in the example_outputs directory. Opening this file will show that it contains the same contents as the original file.
+
+
+You can then go and look at which data node(s) the client contacted in the previous get request. Then, go to one of the data nodes the client previously contacted and interrupt the process (CTRL+C). Wait a few seconds and the NameNode will say that that data node has timed out. Then, make the same request again:
+
+$> get big_remote example_outputs/big_local2
+
+The client will show that it is contacting the other data node this time, and looking at the file big_local2 will show that the client was still able to retrieve the file. 
+
+$> put emptyfile remote_empty
+
+This will show an error because the replication factor is 2 and there is only one data node online.
+
+If you then start the interrupted data node up again, you can see that the client is able to contact it again once it starts running again.
+
+ON THE PREVIOUSLY INTERRUPTED MACHINE:
+bash run.sh -dataNode
+
+ON THE CLIENT:
+$> get big_remote example_outputs/big_local3
+
+
+
+A small file that all fits into one chunk and an empty file that also fits into one chunk are also included in example_files/ that you can use.
