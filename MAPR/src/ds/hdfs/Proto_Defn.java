@@ -2915,12 +2915,20 @@ public final class Proto_Defn {
     boolean getStatus();
 
     /**
-     * <code>required bytes bytes = 2;</code>
+     * <pre>
+     *not included if status if false
+     * </pre>
+     *
+     * <code>optional bytes bytes = 2;</code>
      * @return Whether the bytes field is set.
      */
     boolean hasBytes();
     /**
-     * <code>required bytes bytes = 2;</code>
+     * <pre>
+     *not included if status if false
+     * </pre>
+     *
+     * <code>optional bytes bytes = 2;</code>
      * @return The bytes.
      */
     com.google.protobuf.ByteString getBytes();
@@ -3039,14 +3047,22 @@ public final class Proto_Defn {
     public static final int BYTES_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString bytes_;
     /**
-     * <code>required bytes bytes = 2;</code>
+     * <pre>
+     *not included if status if false
+     * </pre>
+     *
+     * <code>optional bytes bytes = 2;</code>
      * @return Whether the bytes field is set.
      */
     public boolean hasBytes() {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>required bytes bytes = 2;</code>
+     * <pre>
+     *not included if status if false
+     * </pre>
+     *
+     * <code>optional bytes bytes = 2;</code>
      * @return The bytes.
      */
     public com.google.protobuf.ByteString getBytes() {
@@ -3061,10 +3077,6 @@ public final class Proto_Defn {
       if (isInitialized == 0) return false;
 
       if (!hasStatus()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasBytes()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -3385,9 +3397,6 @@ public final class Proto_Defn {
         if (!hasStatus()) {
           return false;
         }
-        if (!hasBytes()) {
-          return false;
-        }
         return true;
       }
 
@@ -3450,21 +3459,33 @@ public final class Proto_Defn {
 
       private com.google.protobuf.ByteString bytes_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>required bytes bytes = 2;</code>
+       * <pre>
+       *not included if status if false
+       * </pre>
+       *
+       * <code>optional bytes bytes = 2;</code>
        * @return Whether the bytes field is set.
        */
       public boolean hasBytes() {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>required bytes bytes = 2;</code>
+       * <pre>
+       *not included if status if false
+       * </pre>
+       *
+       * <code>optional bytes bytes = 2;</code>
        * @return The bytes.
        */
       public com.google.protobuf.ByteString getBytes() {
         return bytes_;
       }
       /**
-       * <code>required bytes bytes = 2;</code>
+       * <pre>
+       *not included if status if false
+       * </pre>
+       *
+       * <code>optional bytes bytes = 2;</code>
        * @param value The bytes to set.
        * @return This builder for chaining.
        */
@@ -3478,7 +3499,11 @@ public final class Proto_Defn {
         return this;
       }
       /**
-       * <code>required bytes bytes = 2;</code>
+       * <pre>
+       *not included if status if false
+       * </pre>
+       *
+       * <code>optional bytes bytes = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearBytes() {
@@ -8126,7 +8151,7 @@ public final class Proto_Defn {
       "s.DataNodeInfo\022\021\n\tchunkName\030\002 \002(\t\"J\n\013Blo" +
       "ckReport\022(\n\014dataNodeInfo\030\001 \002(\0132\022.hdfs.Da" +
       "taNodeInfo\022\021\n\tchunkName\030\002 \003(\t\"2\n\021ReadBlo" +
-      "ckResponse\022\016\n\006status\030\001 \002(\010\022\r\n\005bytes\030\002 \002(" +
+      "ckResponse\022\016\n\006status\030\001 \002(\010\022\r\n\005bytes\030\002 \001(" +
       "\014\"$\n\022WriteBlockResponse\022\016\n\006status\030\001 \002(\010\"" +
       "3\n\rClientRequest\022\020\n\010fileName\030\001 \001(\t\022\020\n\010fi" +
       "leSize\030\002 \001(\003\"%\n\020ReadBlockRequest\022\021\n\tchun" +

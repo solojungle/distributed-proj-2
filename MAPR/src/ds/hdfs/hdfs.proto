@@ -32,7 +32,7 @@ message BlockReport{
 //dataNode -> client
 message ReadBlockResponse{
     required bool status = 1;
-    required bytes bytes = 2;
+    optional bytes bytes = 2; //not included if status if false
 }
 
 //dataNode -> client

@@ -326,6 +326,7 @@ public class Client
                 System.out.println("1. put local_file hdfs_file ## To put a local file local_file in HDFS with name hdfs_file");
                 System.out.println("2. get hdfs_file local_file  ## To get a file hdfs_file from HDFS and save locally as local_file"); 
                 System.out.println("3. list ## To get the list of files in HDFS");
+                System.out.println("4. quit ## exit client");
             }
             else if(Split_Commands[0].equals("put"))  // put Filename
             {
