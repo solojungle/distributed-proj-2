@@ -325,9 +325,8 @@ public class NameNode implements INameNode {
 
             long rep = replication_factor;
             for (int i = 0; i < dn_chunk_names.size(); i++) {
+                Proto_Defn.ChunkLocations.Builder chunk = Proto_Defn.ChunkLocations.newBuilder();
                 for (int j = 0; j < online.length; j++) {
-
-                    Proto_Defn.ChunkLocations.Builder chunk = Proto_Defn.ChunkLocations.newBuilder();
 
                     DataNode dn = servers.get(online[j]);
 
