@@ -6258,6 +6258,25 @@ public final class Proto_Defn {
      * @return The status.
      */
     boolean getStatus();
+
+    /**
+     * <pre>
+     *only used for put (assignBlock) requests, only include if status is false
+     * </pre>
+     *
+     * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+     * @return Whether the error field is set.
+     */
+    boolean hasError();
+    /**
+     * <pre>
+     *only used for put (assignBlock) requests, only include if status is false
+     * </pre>
+     *
+     * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+     * @return The error.
+     */
+    ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode getError();
   }
   /**
    * <pre>
@@ -6278,6 +6297,7 @@ public final class Proto_Defn {
     }
     private ReturnChunkLocations() {
       locations_ = java.util.Collections.emptyList();
+      error_ = 1;
     }
 
     @java.lang.Override
@@ -6330,6 +6350,18 @@ public final class Proto_Defn {
               status_ = input.readBool();
               break;
             }
+            case 32: {
+              int rawValue = input.readEnum();
+                @SuppressWarnings("deprecation")
+              ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode value = ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(4, rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                error_ = rawValue;
+              }
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -6363,6 +6395,118 @@ public final class Proto_Defn {
       return ds.hdfs.Proto_Defn.internal_static_hdfs_ReturnChunkLocations_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               ds.hdfs.Proto_Defn.ReturnChunkLocations.class, ds.hdfs.Proto_Defn.ReturnChunkLocations.Builder.class);
+    }
+
+    /**
+     * Protobuf enum {@code hdfs.ReturnChunkLocations.ErrorCode}
+     */
+    public enum ErrorCode
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <pre>
+       *if file already exists in hdfs, refuse request
+       * </pre>
+       *
+       * <code>FILE_ALREADY_EXISTS = 1;</code>
+       */
+      FILE_ALREADY_EXISTS(1),
+      /**
+       * <pre>
+       *if number of available data nodes is less than replication factor
+       * </pre>
+       *
+       * <code>NOT_ENOUGH_SERVERS = 2;</code>
+       */
+      NOT_ENOUGH_SERVERS(2),
+      ;
+
+      /**
+       * <pre>
+       *if file already exists in hdfs, refuse request
+       * </pre>
+       *
+       * <code>FILE_ALREADY_EXISTS = 1;</code>
+       */
+      public static final int FILE_ALREADY_EXISTS_VALUE = 1;
+      /**
+       * <pre>
+       *if number of available data nodes is less than replication factor
+       * </pre>
+       *
+       * <code>NOT_ENOUGH_SERVERS = 2;</code>
+       */
+      public static final int NOT_ENOUGH_SERVERS_VALUE = 2;
+
+
+      public final int getNumber() {
+        return value;
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static ErrorCode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      /**
+       * @param value The numeric wire value of the corresponding enum entry.
+       * @return The enum associated with the given numeric wire value.
+       */
+      public static ErrorCode forNumber(int value) {
+        switch (value) {
+          case 1: return FILE_ALREADY_EXISTS;
+          case 2: return NOT_ENOUGH_SERVERS;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<ErrorCode>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          ErrorCode> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<ErrorCode>() {
+              public ErrorCode findValueByNumber(int number) {
+                return ErrorCode.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return ds.hdfs.Proto_Defn.ReturnChunkLocations.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final ErrorCode[] VALUES = values();
+
+      public static ErrorCode valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private ErrorCode(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:hdfs.ReturnChunkLocations.ErrorCode)
     }
 
     private int bitField0_;
@@ -6463,6 +6607,33 @@ public final class Proto_Defn {
       return status_;
     }
 
+    public static final int ERROR_FIELD_NUMBER = 4;
+    private int error_;
+    /**
+     * <pre>
+     *only used for put (assignBlock) requests, only include if status is false
+     * </pre>
+     *
+     * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+     * @return Whether the error field is set.
+     */
+    public boolean hasError() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <pre>
+     *only used for put (assignBlock) requests, only include if status is false
+     * </pre>
+     *
+     * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+     * @return The error.
+     */
+    public ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode getError() {
+      @SuppressWarnings("deprecation")
+      ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode result = ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode.valueOf(error_);
+      return result == null ? ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode.FILE_ALREADY_EXISTS : result;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -6496,6 +6667,9 @@ public final class Proto_Defn {
       if (((bitField0_ & 0x00000002) != 0)) {
         output.writeBool(3, status_);
       }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        output.writeEnum(4, error_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6516,6 +6690,10 @@ public final class Proto_Defn {
       if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(3, status_);
+      }
+      if (((bitField0_ & 0x00000004) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(4, error_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6544,6 +6722,10 @@ public final class Proto_Defn {
         if (getStatus()
             != other.getStatus()) return false;
       }
+      if (hasError() != other.hasError()) return false;
+      if (hasError()) {
+        if (error_ != other.error_) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6567,6 +6749,10 @@ public final class Proto_Defn {
         hash = (37 * hash) + STATUS_FIELD_NUMBER;
         hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
             getStatus());
+      }
+      if (hasError()) {
+        hash = (37 * hash) + ERROR_FIELD_NUMBER;
+        hash = (53 * hash) + error_;
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -6717,6 +6903,8 @@ public final class Proto_Defn {
         bitField0_ = (bitField0_ & ~0x00000002);
         status_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
+        error_ = 1;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -6762,6 +6950,10 @@ public final class Proto_Defn {
           result.status_ = status_;
           to_bitField0_ |= 0x00000002;
         }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.error_ = error_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -6842,6 +7034,9 @@ public final class Proto_Defn {
         }
         if (other.hasStatus()) {
           setStatus(other.getStatus());
+        }
+        if (other.hasError()) {
+          setError(other.getError());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7279,6 +7474,64 @@ public final class Proto_Defn {
       public Builder clearStatus() {
         bitField0_ = (bitField0_ & ~0x00000004);
         status_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int error_ = 1;
+      /**
+       * <pre>
+       *only used for put (assignBlock) requests, only include if status is false
+       * </pre>
+       *
+       * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+       * @return Whether the error field is set.
+       */
+      public boolean hasError() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       * <pre>
+       *only used for put (assignBlock) requests, only include if status is false
+       * </pre>
+       *
+       * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+       * @return The error.
+       */
+      public ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode getError() {
+        @SuppressWarnings("deprecation")
+        ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode result = ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode.valueOf(error_);
+        return result == null ? ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode.FILE_ALREADY_EXISTS : result;
+      }
+      /**
+       * <pre>
+       *only used for put (assignBlock) requests, only include if status is false
+       * </pre>
+       *
+       * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+       * @param value The error to set.
+       * @return This builder for chaining.
+       */
+      public Builder setError(ds.hdfs.Proto_Defn.ReturnChunkLocations.ErrorCode value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000008;
+        error_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *only used for put (assignBlock) requests, only include if status is false
+       * </pre>
+       *
+       * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearError() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        error_ = 1;
         onChanged();
         return this;
       }
@@ -8156,11 +8409,14 @@ public final class Proto_Defn {
       "3\n\rClientRequest\022\020\n\010fileName\030\001 \001(\t\022\020\n\010fi" +
       "leSize\030\002 \001(\003\"%\n\020ReadBlockRequest\022\021\n\tchun" +
       "kName\030\001 \002(\t\"5\n\021WriteBlockRequest\022\021\n\tchun" +
-      "kName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"b\n\024ReturnChun" +
-      "kLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.Chu" +
-      "nkLocations\022\021\n\tblockSize\030\002 \001(\005\022\016\n\006status" +
-      "\030\003 \002(\010\".\n\nListResult\022\020\n\010fileName\030\001 \003(\t\022\016" +
-      "\n\006status\030\002 \002(\010B\025\n\007ds.hdfsB\nProto_Defn"
+      "kName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"\325\001\n\024ReturnChu" +
+      "nkLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.Ch" +
+      "unkLocations\022\021\n\tblockSize\030\002 \001(\005\022\016\n\006statu" +
+      "s\030\003 \002(\010\0223\n\005error\030\004 \001(\0162$.hdfs.ReturnChun" +
+      "kLocations.ErrorCode\"<\n\tErrorCode\022\027\n\023FIL" +
+      "E_ALREADY_EXISTS\020\001\022\026\n\022NOT_ENOUGH_SERVERS" +
+      "\020\002\".\n\nListResult\022\020\n\010fileName\030\001 \003(\t\022\016\n\006st" +
+      "atus\030\002 \002(\010B\025\n\007ds.hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8219,7 +8475,7 @@ public final class Proto_Defn {
     internal_static_hdfs_ReturnChunkLocations_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_hdfs_ReturnChunkLocations_descriptor,
-        new java.lang.String[] { "Locations", "BlockSize", "Status", });
+        new java.lang.String[] { "Locations", "BlockSize", "Status", "Error", });
     internal_static_hdfs_ListResult_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_hdfs_ListResult_fieldAccessorTable = new

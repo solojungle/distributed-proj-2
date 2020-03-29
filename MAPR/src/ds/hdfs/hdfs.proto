@@ -70,6 +70,12 @@ message ReturnChunkLocations{
     repeated ChunkLocations locations = 1; //sorted by chunk number
     optional int32 blockSize = 2; //block size in Bytes
     required bool status = 3;
+    enum ErrorCode{
+        FILE_ALREADY_EXISTS = 1; //if file already exists in hdfs, refuse request
+        NOT_ENOUGH_SERVERS = 2; //if number of available data nodes is less than replication factor
+    }
+    optional ErrorCode error = 4; //only used for put (assignBlock) requests, only include if status is false
+    
 }
 
 //nameNode -> client
