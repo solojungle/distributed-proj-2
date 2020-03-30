@@ -227,7 +227,7 @@ public class DataNode implements IDataNode {
 			// spawn off block report thread
 			Timer timer = new Timer();
 			TimerTask task = new BlockReportLoop(Me);
-			timer.schedule(task, Me.MyInterval, Me.MyInterval);
+			timer.schedule(task, 0, Me.MyInterval);
 
 		} catch (Exception e) {
 			System.out.println("dataNode failed:" + e.getMessage());
