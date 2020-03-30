@@ -6261,7 +6261,7 @@ public final class Proto_Defn {
 
     /**
      * <pre>
-     *only used for put (assignBlock) requests, only include if status is false
+     *only include if status is false
      * </pre>
      *
      * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -6270,7 +6270,7 @@ public final class Proto_Defn {
     boolean hasError();
     /**
      * <pre>
-     *only used for put (assignBlock) requests, only include if status is false
+     *only include if status is false
      * </pre>
      *
      * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -6404,7 +6404,7 @@ public final class Proto_Defn {
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
        * <pre>
-       *if file already exists in hdfs, refuse request
+       * for PUT (assignBlock) if file already exists in hdfs, refuse request
        * </pre>
        *
        * <code>FILE_ALREADY_EXISTS = 1;</code>
@@ -6412,17 +6412,33 @@ public final class Proto_Defn {
       FILE_ALREADY_EXISTS(1),
       /**
        * <pre>
-       *if number of available data nodes is less than replication factor
+       *for PUT (assignBlock) if number of available data nodes is less than replication factor
        * </pre>
        *
        * <code>NOT_ENOUGH_SERVERS = 2;</code>
        */
       NOT_ENOUGH_SERVERS(2),
+      /**
+       * <pre>
+       *for GET (getBlockLocations) if requested file does not exist in HDFS
+       * </pre>
+       *
+       * <code>FILE_NOT_EXIST = 3;</code>
+       */
+      FILE_NOT_EXIST(3),
+      /**
+       * <pre>
+       *for GET (getBlockLocations) if for a given chunk, all servers that hold it are offline
+       * </pre>
+       *
+       * <code>ALL_SERVERS_DOWN = 4;</code>
+       */
+      ALL_SERVERS_DOWN(4),
       ;
 
       /**
        * <pre>
-       *if file already exists in hdfs, refuse request
+       * for PUT (assignBlock) if file already exists in hdfs, refuse request
        * </pre>
        *
        * <code>FILE_ALREADY_EXISTS = 1;</code>
@@ -6430,12 +6446,28 @@ public final class Proto_Defn {
       public static final int FILE_ALREADY_EXISTS_VALUE = 1;
       /**
        * <pre>
-       *if number of available data nodes is less than replication factor
+       *for PUT (assignBlock) if number of available data nodes is less than replication factor
        * </pre>
        *
        * <code>NOT_ENOUGH_SERVERS = 2;</code>
        */
       public static final int NOT_ENOUGH_SERVERS_VALUE = 2;
+      /**
+       * <pre>
+       *for GET (getBlockLocations) if requested file does not exist in HDFS
+       * </pre>
+       *
+       * <code>FILE_NOT_EXIST = 3;</code>
+       */
+      public static final int FILE_NOT_EXIST_VALUE = 3;
+      /**
+       * <pre>
+       *for GET (getBlockLocations) if for a given chunk, all servers that hold it are offline
+       * </pre>
+       *
+       * <code>ALL_SERVERS_DOWN = 4;</code>
+       */
+      public static final int ALL_SERVERS_DOWN_VALUE = 4;
 
 
       public final int getNumber() {
@@ -6460,6 +6492,8 @@ public final class Proto_Defn {
         switch (value) {
           case 1: return FILE_ALREADY_EXISTS;
           case 2: return NOT_ENOUGH_SERVERS;
+          case 3: return FILE_NOT_EXIST;
+          case 4: return ALL_SERVERS_DOWN;
           default: return null;
         }
       }
@@ -6611,7 +6645,7 @@ public final class Proto_Defn {
     private int error_;
     /**
      * <pre>
-     *only used for put (assignBlock) requests, only include if status is false
+     *only include if status is false
      * </pre>
      *
      * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -6622,7 +6656,7 @@ public final class Proto_Defn {
     }
     /**
      * <pre>
-     *only used for put (assignBlock) requests, only include if status is false
+     *only include if status is false
      * </pre>
      *
      * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -7481,7 +7515,7 @@ public final class Proto_Defn {
       private int error_ = 1;
       /**
        * <pre>
-       *only used for put (assignBlock) requests, only include if status is false
+       *only include if status is false
        * </pre>
        *
        * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -7492,7 +7526,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *only used for put (assignBlock) requests, only include if status is false
+       *only include if status is false
        * </pre>
        *
        * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -7505,7 +7539,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *only used for put (assignBlock) requests, only include if status is false
+       *only include if status is false
        * </pre>
        *
        * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -7523,7 +7557,7 @@ public final class Proto_Defn {
       }
       /**
        * <pre>
-       *only used for put (assignBlock) requests, only include if status is false
+       *only include if status is false
        * </pre>
        *
        * <code>optional .hdfs.ReturnChunkLocations.ErrorCode error = 4;</code>
@@ -8409,14 +8443,15 @@ public final class Proto_Defn {
       "3\n\rClientRequest\022\020\n\010fileName\030\001 \001(\t\022\020\n\010fi" +
       "leSize\030\002 \001(\003\"%\n\020ReadBlockRequest\022\021\n\tchun" +
       "kName\030\001 \002(\t\"5\n\021WriteBlockRequest\022\021\n\tchun" +
-      "kName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"\325\001\n\024ReturnChu" +
+      "kName\030\001 \002(\t\022\r\n\005bytes\030\002 \002(\014\"\377\001\n\024ReturnChu" +
       "nkLocations\022\'\n\tlocations\030\001 \003(\0132\024.hdfs.Ch" +
       "unkLocations\022\021\n\tblockSize\030\002 \001(\005\022\016\n\006statu" +
       "s\030\003 \002(\010\0223\n\005error\030\004 \001(\0162$.hdfs.ReturnChun" +
-      "kLocations.ErrorCode\"<\n\tErrorCode\022\027\n\023FIL" +
+      "kLocations.ErrorCode\"f\n\tErrorCode\022\027\n\023FIL" +
       "E_ALREADY_EXISTS\020\001\022\026\n\022NOT_ENOUGH_SERVERS" +
-      "\020\002\".\n\nListResult\022\020\n\010fileName\030\001 \003(\t\022\016\n\006st" +
-      "atus\030\002 \002(\010B\025\n\007ds.hdfsB\nProto_Defn"
+      "\020\002\022\022\n\016FILE_NOT_EXIST\020\003\022\024\n\020ALL_SERVERS_DO" +
+      "WN\020\004\".\n\nListResult\022\020\n\010fileName\030\001 \003(\t\022\016\n\006" +
+      "status\030\002 \002(\010B\025\n\007ds.hdfsB\nProto_Defn"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

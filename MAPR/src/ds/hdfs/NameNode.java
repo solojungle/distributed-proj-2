@@ -235,7 +235,7 @@ public class NameNode implements INameNode {
             //if given chunk was not found on any server, report error, client is unable to read file
             if (chunklocations.getDataNodeInfoCount() == 0) {
                 resp.setStatus(false);
-                resp.setBlockSize((int) blocksize);
+                resp.setError(Proto_Defn.ReturnChunkLocations.ErrorCode.ALL_SERVERS_DOWN);
                 return resp;
             }
 

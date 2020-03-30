@@ -71,10 +71,12 @@ message ReturnChunkLocations{
     optional int32 blockSize = 2; //block size in Bytes
     required bool status = 3;
     enum ErrorCode{
-        FILE_ALREADY_EXISTS = 1; //if file already exists in hdfs, refuse request
-        NOT_ENOUGH_SERVERS = 2; //if number of available data nodes is less than replication factor
+        FILE_ALREADY_EXISTS = 1; // for PUT (assignBlock) if file already exists in hdfs, refuse request
+        NOT_ENOUGH_SERVERS = 2; //for PUT (assignBlock) if number of available data nodes is less than replication factor
+        FILE_NOT_EXIST = 3; //for GET (getBlockLocations) if requested file does not exist in HDFS
+        ALL_SERVERS_DOWN = 4; //for GET (getBlockLocations) if for a given chunk, all servers that hold it are offline
     }
-    optional ErrorCode error = 4; //only used for put (assignBlock) requests, only include if status is false
+    optional ErrorCode error = 4; //only include if status is false
     
 }
 

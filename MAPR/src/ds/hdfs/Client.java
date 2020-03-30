@@ -226,8 +226,18 @@ public class Client {
 		try {
 			NNresponse = NNStub.getBlockLocations(input);
 			fileList = ReturnChunkLocations.parseFrom(NNresponse);
+
+			// check for errors
 			if (fileList.getStatus() == false) {
-				System.out.println("Error: no servers available");
+				if (fileList.hasError()) {
+					if (fileList.getError() == ReturnChunkLocations.ErrorCode.FILE_NOT_EXIST) {
+						System.out.println("Error: '" + hdfsFile + "' does not exist in HDFS");
+					} else if (fileList.getError() == ReturnChunkLocations.ErrorCode.ALL_SERVERS_DOWN) {
+						System.out.println("Error: all servers with your file are offline right now");
+					}
+				} else {
+					System.out.println("Error getting chunk locations");
+				}
 				return;
 			}
 		} catch (Exception e1) {
