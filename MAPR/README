@@ -1,5 +1,8 @@
 Compile/run using run.sh
 
+Our project supports all functions: put, get, list, adjustable config files, data nodes restarting
+
+
 COMPILE:
 bash run.sh -c
 
