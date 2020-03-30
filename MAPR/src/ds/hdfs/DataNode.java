@@ -173,16 +173,6 @@ public class DataNode implements IDataNode {
 		NNStub.blockReport(b.build().toByteArray());
 
 	}
-	/*
-	 * public void BindServer(String Name, String IP, int Port) { try { IDataNode
-	 * stub = (IDataNode) UnicastRemoteObject.exportObject(this, 0);
-	 * System.setProperty("java.rmi.server.hostname", IP); serverRegistry =
-	 * LocateRegistry.createRegistry(Port); Registry registry =
-	 * LocateRegistry.getRegistry(Port); registry.rebind(Name, stub);
-	 * System.out.println("\nDataNode connected to RMIregistry\n"); } catch
-	 * (Exception e) { System.err.println("Server Exception: " + e.toString());
-	 * e.printStackTrace(); } }
-	 */
 
 	public INameNode GetNNStub(String Name, String IP, int Port) {
 		while (true) {
