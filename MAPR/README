@@ -117,7 +117,7 @@ $> put emptyfile remote_empty
 
 This will show an error because the replication factor is 2 and there is only one data node online.
 
-If you then start the interrupted data node up again, you can see that the client is able to contact it again once it starts running again.
+If you then start the interrupted data node up again and wait for it to begin sending block reports, you can see that the client is able to contact it again once it starts running again.
 
 ON THE PREVIOUSLY INTERRUPTED MACHINE:
 bash run.sh -dataNode
