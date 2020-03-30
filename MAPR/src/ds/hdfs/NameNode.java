@@ -181,14 +181,17 @@ public class NameNode implements INameNode {
             /* Get the ClientRequest */
             Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
 
-            /* Get filename, filesize, and request type from message */
+            /* Get filename, filesize from message */
             String filename = request.getFileName();
             long filesize = request.getFileSize();
 
-            /* Retrieve and store the JSONObject else throw */
+            /* Check if file exists, if not return error */
             JSONObject file_object = searchJSONFile(STORAGE_PATH, "name", filename);
             if (file_object == null) {
-                throw new Error("error: given file does not exist");
+                Proto_Defn.ReturnChunkLocations.ErrorCode fileEnum = Proto_Defn.ReturnChunkLocations.ErrorCode.FILE_NOT_EXIST;
+                response.setError(fileEnum);
+                response.setStatus(false);
+                return response.build().toByteArray();
             }
 
             response = createBlockLocationResponse(file_object);
@@ -294,7 +297,7 @@ public class NameNode implements INameNode {
             /* Get the ClientRequest */
             Proto_Defn.ClientRequest request = Proto_Defn.ClientRequest.parseFrom(inp);
 
-            /* Get filename, filesize, and request type from message */
+            /* Get filename, filesize from message */
             String filename = request.getFileName();
             long filesize = request.getFileSize();
 
