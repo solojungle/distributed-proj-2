@@ -217,14 +217,14 @@ public class NameNode implements INameNode {
         JSONArray filelist = (JSONArray) file.get("chunks");
 
         //loop through each chunk
-        for(Object chunkname : filelist){
+        for (Object chunkname : filelist) {
             Proto_Defn.ChunkLocations.Builder chunklocations = Proto_Defn.ChunkLocations.newBuilder();
             chunklocations.setChunkName(chunkname.toString());
-        
+
             //for each server, check if that server has the chunk
-            for (String string : online){
+            for (String string : online) {
                 TreeSet curr = chunks.get(string);
-                if (curr.contains(chunkname.toString())) {	
+                if (curr.contains(chunkname.toString())) {
 
                     //if server has chunk, add data node to list of locations for that chunk
                     DataNode dn = servers.get(string);
@@ -235,11 +235,11 @@ public class NameNode implements INameNode {
                     dninfo.setPort(dn.port);
 
                     chunklocations.addDataNodeInfo(dninfo);
-                }	
-	    }
+                }
+            }
 
             //if given chunk was not found on any server, report error, client is unable to read file
-            if(chunklocations.getDataNodeInfoCount() == 0){
+            if (chunklocations.getDataNodeInfoCount() == 0) {
                 resp.setStatus(false);
                 resp.setBlockSize((int) blocksize);
                 return resp;
@@ -249,7 +249,7 @@ public class NameNode implements INameNode {
             resp.addLocations(chunklocations);
         }
 
-	//set request info
+        //set request info
         resp.setBlockSize((int) blocksize);
         resp.setStatus(true);
 
@@ -290,8 +290,11 @@ public class NameNode implements INameNode {
 
         try {
             Object[] online = getOnlineServers().toArray();
-            if (online.length < 1) {
-                throw new Error("error: no servers online");
+            if (online.length < replication_factor) {
+                Proto_Defn.ReturnChunkLocations.ErrorCode fileEnum = Proto_Defn.ReturnChunkLocations.ErrorCode.NOT_ENOUGH_SERVERS;
+                response.setError(fileEnum);
+                response.setStatus(false);
+                return response.build().toByteArray();
             }
 
             /* Get the ClientRequest */
@@ -300,6 +303,24 @@ public class NameNode implements INameNode {
             /* Get filename, filesize, and request type from message */
             String filename = request.getFileName();
             long filesize = request.getFileSize();
+
+            /* Check if file already exists */
+            JSONArray storage = readJSONFile(STORAGE_PATH);
+
+
+            /* Check if file already exists */
+            for (Object o : storage) {
+                JSONObject cur = (JSONObject) o;
+
+                /* File already exists */
+                if (cur.get("name").equals(filename)) {
+                    Proto_Defn.ReturnChunkLocations.ErrorCode fileEnum = Proto_Defn.ReturnChunkLocations.ErrorCode.FILE_ALREADY_EXISTS;
+                    response.setError(fileEnum);
+                    response.setStatus(false);
+                    return response.build().toByteArray();
+                }
+
+            }
 
             /* Get chunksize from namenode_config.txt */
             long chunksize = getBlockSize();
@@ -331,7 +352,7 @@ public class NameNode implements INameNode {
             /* Append JSON to storage file */
             appendJSONFile(STORAGE_PATH, tmp);
 
-            /* Setup reponse */
+            /* Setup response */
             response.setBlockSize((int) blocksize);
 
             long rep = replication_factor;
