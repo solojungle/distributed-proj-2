@@ -83,14 +83,8 @@ public class NameNode implements INameNode {
             /* Remote object exported to the Java RMI runtime so that it may receive incoming remote calls */
             INameNode stub = (INameNode) UnicastRemoteObject.exportObject(obj, 0);
 
-            /*
-             * Returns a stub that implements the remote interface java.rmi.registry.
-             * Sends invocations to the registry on server's local host on the default registry port of 1099.
-             * */
-            Registry registry = LocateRegistry.getRegistry();
-
             /* Bind the remote object's stub in the registry. */
-            registry.bind(config_attr.get("name"), stub);
+            serverRegistry.bind(config_attr.get("name"), stub);
 
             System.out.println("NameNode server is running...");
 
