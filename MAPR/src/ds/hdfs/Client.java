@@ -122,7 +122,7 @@ public class Client {
 					if (fileList.getError() == ReturnChunkLocations.ErrorCode.FILE_ALREADY_EXISTS) {
 						System.out.println("Error: '" + hdfsFile + "' already exists in HDFS");
 					} else if (fileList.getError() == ReturnChunkLocations.ErrorCode.NOT_ENOUGH_SERVERS) {
-						System.out.println("Error: there are not enough available servers right now");
+						System.out.println("Error: there are not enough available servers right now to meet the replication factor for your write request. Lower the replication factor or wait until more servers are up.");
 					}
 				} else {
 					System.out.println("Error getting chunk locations");
