@@ -368,9 +368,6 @@ public class NameNode implements INameNode {
 
                     rep -= 1;
 
-                    //if (j < online.length) {
-                    //    j = 0;
-                   // }
                     if (rep == 0) {
                         chunk.setChunkName(dn_chunk_names.get(i).toString());
                         response.addLocations(chunk);
