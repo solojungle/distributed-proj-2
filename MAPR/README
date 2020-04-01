@@ -1,14 +1,35 @@
-Compile/run using run.sh
+HDFS: Michelle Wu (mww45), Ali Awari (FILL IN NETID PLEASE)
 
+
+0. NOTES:
+Compile/run using run.sh
 Our project supports all functions: put, get, list, adjustable config files, data nodes restarting
 
 
-COMPILE:
+1. COMPILE:
 bash run.sh -c
 
 
+2. CONFIG:
+You can skip this if you want to use the default parameters.
 
-RUNNING:
+Configure nameNode by going into src/nn_config.txt
+Configure dataNode by going into src/dn_config.txt
+
+All intervals in config files are in milliseconds
+
+2a. Name node config parameters:
+	The nn_config.txt file (src/nn_config.txt) provided is set up such that NameNode should be run from ls.cs.rutgers.edu. To run NameNode from another machine, change the IP address in nn_config.txt to the IP address of the desired machine. You can also change other configuration settings from nn_config.txt.
+
+
+2b. Data node config parameters:
+	interval: how often each data node sends a heartbeat/block report (combined into one message) (default: 3000)
+	port: what port this data node should start its RMI registry on (default: 1099)
+
+	The data node will automatically detect which IP its running from, so you do not need to specify it.
+
+
+3. RUNNING:
 Note: the nameNode and dataNode programs will start the RMI registry themselves. You do NOT need to run rmiregistry on the cmd line.
 
 All commands should be run from this directory (where this README and run.sh are located).
@@ -22,31 +43,20 @@ CLEAN UP /bin directory:
 bash run.sh -clean
 
 
-CONFIG:
-Configure nameNode by going into src/nn_config.txt
-Configure dataNode by going into src/dn_config.txt
-
-All intervals in config files are in milliseconds
-
-
-
-RUNNING NAMENODE
+3a. RUNNING NAMENODE
 
 bash run.sh -nameNode
 
-The nn_config.txt file (src/nn_config.txt) provided is set up such that NameNode should be run from ls.cs.rutgers.edu. To run NameNode from another machine, change the IP address in nn_config.txt to the IP address of the desired machine. You can also change other configuration settings from nn_config.txt.
 
-
-RUNNING DATANODE
+3b. RUNNING DATANODE
 
 bash run.sh -dataNode
 
 DataNode should be run on multiple machines.
 
-The dn_config.txt file (src/dn_config.txt) allows you to control the interval at which heartbeats/blockReports are sent. They are combined into one message. The default configuration included is every 3000 ms (3 seconds). This file also allows you to change the port on which the RMI registry is started. The program will automatically determine its IP address and name used to identify itself, so there is no need to specify it.
 
 
-RUNNING CLIENT
+3c. RUNNING CLIENT
 
 bash run.sh -client
 
@@ -60,8 +70,7 @@ CLIENT INSTRUCTIONS:
 
 
 
-
-EXAMPLE PROGRAM (2 data nodes, replication factor of 2, block size = 64 bytes) (see config files for full specs)
+4. EXAMPLE PROGRAM (2 data nodes, replication factor of 2, block size = 64 bytes) (see config files for full specs)
 Test files are provided in the example_files directory
 (run on ilabs)
 
@@ -84,9 +93,6 @@ RUN ON less.cs.rutgers.edu:
 bash run.sh -client
 
 The user interface will appear. From here, you can use the instructions given above to interact with the HDFS.
-
-
-
 
 
 $> list
