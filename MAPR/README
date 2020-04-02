@@ -1,4 +1,4 @@
-HDFS: Michelle Wu (mww45), Ali Awari (FILL IN NETID PLEASE)
+HDFS: Michelle Wu (mww45), Ali Awari (aka87)
 
 
 0. NOTES:
@@ -21,6 +21,16 @@ All intervals in config files are in milliseconds
 2a. Name node config parameters:
 	The nn_config.txt file (src/nn_config.txt) provided is set up such that NameNode should be run from ls.cs.rutgers.edu. To run NameNode from another machine, change the IP address in nn_config.txt to the IP address of the desired machine. You can also change other configuration settings from nn_config.txt.
 
+    NameNode Config Parameters:
+    ====================
+    name:           name you want to give the NameNode
+    ip:             ip address where you are running the NameNode
+    port:           port you want NameNode to use
+    blocksize:      size of data chunk partitions
+    interval:       frequency at which NameNode checks if a DataNode has timed out, in MS
+    timeout:        amount of time passed since last block report where you would consider a DataNode offline in MS
+    replication:    amount of times you want to duplicate a data chunk
+    ====================
 
 2b. Data node config parameters:
 	interval: how often each data node sends a heartbeat/block report (combined into one message) (default: 3000)
